@@ -17,6 +17,7 @@ var express = require('express')
   , host = "127.0.0.1"
   , db_logging
   , parseCookie = require('connect').utils.parseCookie
+  , recoms = require('recoms')
 
 var app = module.exports = express.createServer()
 
@@ -115,6 +116,9 @@ app.helper = helper;
 // Boot all models
 // var models = require(__dirname + "/app/models/user");
 // models.init(mysql);
+
+// Start recommendation engine and assign it to app
+app.recoms = recoms
 
 // Bootstrap routes and controllers
 // routes are included inside controllers

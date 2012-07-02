@@ -1,0 +1,16 @@
+{ "name": "recjs"
+, "description": "Recommendations service"
+, "keywords": [ "recommendations" ]
+, "version": "0.0.1"
+, "author": "Evgeny Bogdanov <evgeny.bogdanov@epfl.ch>"
+, "repository": { "type": "git" }
+, "main": "./index.js"
+, "dependencies": {
+  }
+, "scripts": {
+    "test": "./scripts/tests.sh"
+  , "start": "node app.js"
+  }
+, "engines": { "node": ">= 0.8.0" }
+}
+
