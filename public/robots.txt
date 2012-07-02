@@ -1,0 +1,16 @@
+# Prevent robots from running code
+
+User-agent: *
+Disallow: /private
+Disallow: /ajax
+Disallow: /graph
+Disallow: /content
+Disallow: /stylesheets 
+Disallow: /javascripts
+Disallow: /html 
+Disallow: /images
+Disallow: /asset_attachments
+Disallow: /user
+Disallow: /asset
+Disallow: /space
+

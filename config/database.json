@@ -1,0 +1,17 @@
+{
+  "production": {
+    "database" : "gadgets"
+  , "username" : "production"
+  , "password" : "production"
+  }
+, "development": {
+    "database" : "gadgets"
+  , "username" : "root"
+  , "password" : ""
+  }
+, "test": {
+    "database" : "gadgets"
+  , "username" : "root"
+  , "password" : ""
+  }
+}
