@@ -1,13 +1,17 @@
-var should = require('should')
-  , helper = require("../test_helper")({table: "sport"})
+var helper = require("test_helper")
   , gently = new (require('gently'))
+  , should = require('should')
 
-module.exports = {
-  'test Sport.userSports when user is not specified': function () {
-    var app = {UserSport: {}}
-      , Sport = helper.addModel(app)
+function defaultModel(app) {
+  return helper.model(app, "gadget")
+}
+
+describe('gadget', function () {
+  it('should Gadget.userGadgets when user is not specified', function () {
+    var app = {UserGadget: {}}
+      , Gadget = defaultModel(app)
       , user = null
-      , dbSportTree = [
+      , dbGadgetTree = [
           {id: 1, name: "run", kind: "endurance"}
         , {id: 2, name: "ski", kind: "endurance", children: [
             {id: 3, name: "classic", kind: "endurance"}
@@ -15,16 +19,16 @@ module.exports = {
           ]
           }
         ]
-      , dbUserSports = [1,2,3,4]
+      , dbUserGadgets = [1,2,3,4]
 
-    gently.expect(Sport, "allSportTree", function (fn) {
-      fn(null, dbSportTree)
+    gently.expect(Gadget, "allGadgetTree", function (fn) {
+      fn(null, dbGadgetTree)
     })
-    gently.expect(Sport, "allSportIds", function (fn) {
-      fn(null, dbUserSports)
+    gently.expect(Gadget, "allGadgetIds", function (fn) {
+      fn(null, dbUserGadgets)
     })
-    var cb = gently.expect(function (err, sports) {
-      var s = sports[0]
+    var cb = gently.expect(function (err, gadgets) {
+      var s = gadgets[0]
       s.id.should.equal(1)
       s.visible.should.equal(true)
       s.name.should.equal("run")
@@ -33,7 +37,7 @@ module.exports = {
       should.not.exist(s.anaerobic_threshold)
       should.not.exist(s.aerobic_threshold)
 
-      var sub = sports[1].children[0]
+      var sub = gadgets[1].children[0]
       sub.id.should.equal(3)
       sub.visible.should.equal(true)
       sub.name.should.equal("classic")
@@ -42,13 +46,13 @@ module.exports = {
       should.not.exist(sub.anaerobic_threshold)
       should.not.exist(sub.aerobic_threshold)
     })
-    Sport.userSports(user, cb)
-  }
-, 'test Sport.userSports when user is specified': function () {
-    var app = {UserSport: {}}
-      , Sport = helper.addModel(app)
+    Gadget.userGadgets(user, cb)
+  })
+  it('should Gadget.userGadgets when user is specified', function () {
+    var app = {UserGadget: {}}
+      , Gadget = defaultModel(app)
       , user = {id: 1}
-      , dbSportTree = [
+      , dbGadgetTree = [
           {id: 1, name: "run", kind: "endurance"}
         , {id: 2, name: "ski", kind: "endurance", children: [
             {id: 3, name: "classic", kind: "endurance"}
@@ -56,21 +60,21 @@ module.exports = {
           ]}
         , {id: 5, name: "tennis", kind: "other"}
         ]
-      , dbUserSports = [
-          {id: 5, sport_id: 1, anaerobic_threshold: 140, aerobic_threshold: 120, filter_selected: true}
-        , {id: 6, sport_id: 2, anaerobic_threshold: 150, aerobic_threshold: 130, filter_selected: false}
-        , {id: 7, sport_id: 3, filter_selected: true}
+      , dbUserGadgets = [
+          {id: 5, gadget_id: 1, anaerobic_threshold: 140, aerobic_threshold: 120, filter_selected: true}
+        , {id: 6, gadget_id: 2, anaerobic_threshold: 150, aerobic_threshold: 130, filter_selected: false}
+        , {id: 7, gadget_id: 3, filter_selected: true}
         ]
 
-    gently.expect(Sport, "allSportTree", function (fn) {
-      fn(null, dbSportTree)
+    gently.expect(Gadget, "allGadgetTree", function (fn) {
+      fn(null, dbGadgetTree)
     })
-    gently.expect(app.UserSport, "findAll", function (obj, fn) {
+    gently.expect(app.UserGadget, "findAll", function (obj, fn) {
       obj.where.user_id.should.equal(user.id)
-      fn(null, dbUserSports)
+      fn(null, dbUserGadgets)
     })
-    var cb = gently.expect(function (err, sports) {
-      var s = sports[0]
+    var cb = gently.expect(function (err, gadgets) {
+      var s = gadgets[0]
       s.id.should.equal(1)
       s.visible.should.equal(true)
       s.name.should.equal("run")
@@ -79,7 +83,7 @@ module.exports = {
       s.anaerobic_threshold.should.equal(140)
       s.aerobic_threshold.should.equal(120)
 
-      s = sports[2]
+      s = gadgets[2]
       s.id.should.equal(5)
       should.not.exist(s.visible)
       s.name.should.equal("tennis")
@@ -88,7 +92,7 @@ module.exports = {
       should.not.exist(s.anaerobic_threshold)
       should.not.exist(s.aerobic_threshold)
 
-      var sub = sports[1].children[0]
+      var sub = gadgets[1].children[0]
       sub.id.should.equal(3)
       sub.visible.should.equal(true)
       sub.name.should.equal("classic")
@@ -97,7 +101,7 @@ module.exports = {
       sub.anaerobic_threshold.should.equal(150)
       sub.aerobic_threshold.should.equal(130)
 
-      sub = sports[1].children[1]
+      sub = gadgets[1].children[1]
       sub.id.should.equal(4)
       should.not.exist(s.visible)
       sub.name.should.equal("skating")
@@ -106,66 +110,66 @@ module.exports = {
       sub.anaerobic_threshold.should.equal(150)
       sub.aerobic_threshold.should.equal(130)
     })
-    Sport.userSports(user, cb)
-  }
-, 'test Sport.allSportTree': function () {
+    Gadget.userGadgets(user, cb)
+  })
+  it('should Gadget.allGadgetTree', function () {
     var app = {}
-      , Sport = helper.addModel(app)
+      , Gadget = defaultModel(app)
       , user = {}
-      , db = [{id: 4, sport: "run"}
-        , {id: 2, sport: "ski"}
-        , {id: 3, parent_id: 2, sport: "classic"}
+      , db = [{id: 4, gadget: "run"}
+        , {id: 2, gadget: "ski"}
+        , {id: 3, parent_id: 2, gadget: "classic"}
       ]
 
-    gently.expect(Sport, "findAll", function (obj, fn) {
+    gently.expect(Gadget, "findAll", function (obj, fn) {
       fn(null, db)
     })
 
     var fn = gently.expect(function (err, tree) {
       tree.length.should.equal(2)
-      tree[0].sport.should.equal("ski")
+      tree[0].gadget.should.equal("ski")
       tree[0].children.length.should.equal(1)
-      tree[0].children[0].sport.should.equal("classic")
-      tree[1].sport.should.equal("run")
+      tree[0].children[0].gadget.should.equal("classic")
+      tree[1].gadget.should.equal("run")
     })
-    Sport.allSportTree(fn)
-  }
-, 'test Sport.allSportHash': function () {
+    Gadget.allGadgetTree(fn)
+  })
+  it('should Gadget.allGadgetHash', function () {
     var app = {}
-      , Sport = helper.addModel(app)
+      , Gadget = defaultModel(app)
       , user = {}
 
-    gently.expect(Sport, "findAll", function (obj, fn) {
-      fn(null, [{id: 1, sport: "run"}, {id: 2, sport: "ski"}])
+    gently.expect(Gadget, "findAll", function (obj, fn) {
+      fn(null, [{id: 1, gadget: "run"}, {id: 2, gadget: "ski"}])
     })
 
     var fn = gently.expect(function (err, hash) {
-      hash["1"].sport.should.equal("run")
-      hash["2"].sport.should.equal("ski")
+      hash["1"].gadget.should.equal("run")
+      hash["2"].gadget.should.equal("ski")
     })
-    Sport.allSportHash(fn)
-  }
-, 'test Sport.allSportHash': function () {
+    Gadget.allGadgetHash(fn)
+  })
+  it('should Gadget.allGadgetHash', function () {
     var app = {}
-      , Sport = helper.addModel(app)
+      , Gadget = defaultModel(app)
       , user = {}
 
-    gently.expect(Sport, "findAll", function (obj, fn) {
-      fn(null, [{id: 1, sport: "run"}, {id: 2, sport: "ski"}])
+    gently.expect(Gadget, "findAll", function (obj, fn) {
+      fn(null, [{id: 1, gadget: "run"}, {id: 2, gadget: "ski"}])
     })
 
     var fn = gently.expect(function (err, hash) {
-      hash["1"].sport.should.equal("run")
-      hash["2"].sport.should.equal("ski")
+      hash["1"].gadget.should.equal("run")
+      hash["2"].gadget.should.equal("ski")
     })
-    Sport.allSportHash(fn)
-  }
-, 'test Sport.allSportIds': function () {
+    Gadget.allGadgetHash(fn)
+  })
+  it('should Gadget.allGadgetIds', function () {
     var app = {}
-      , Sport = helper.addModel(app)
+      , Gadget = defaultModel(app)
       , user = {}
 
-    gently.expect(Sport, "findAll", function (obj, fn) {
+    gently.expect(Gadget, "findAll", function (obj, fn) {
       fn(null, [{id: 3}, {id: 4}])
     })
 
@@ -173,6 +177,7 @@ module.exports = {
       ids[0].should.equal(3)
       ids[1].should.equal(4)
     })
-    Sport.allSportIds(fn)
-  }
-}
+    Gadget.allGadgetIds(fn)
+  })
+})
+

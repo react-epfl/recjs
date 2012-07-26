@@ -1,43 +1,44 @@
-var assert = require('assert')
-  , gently = global.GENTLY = new (require('gently'))
+var helper = require("test_helper")
+  , gently = new (require('gently'))
   , should = require('should')
-  , AppModel = require('../../app/models/app_model')
-  , _ = require("underscore")._
 
-module.exports = {
-  'test Model.build with default settings': function () {
+var _ = require("underscore")._
+  , AppModel = helper.require('/app/models/app_model')
+
+describe('app_model', function () {
+  it('should Model.build with default settings', function () {
     var instance = AppModel.build({session_id: 15}, {})
     instance.isNewRecord.should.equal(true);
     instance.session_id.should.equal(15);
     instance.attributes[0].should.equal("session_id")
     instance.attributes.length.should.equal(1)
-  },
-  'test Model.build with isNewRecord false': function () {
+  })
+  it('should Model.build with isNewRecord false', function () {
     var instance = AppModel.build({session_id: 15}, {isNewRecord: false})
     instance.isNewRecord.should.equal(false);
-  },
+  })
   //'test Model.build - no empty attribute allowed': function () {
     //should.throws(function () {
       //AppModel.build({})
     //});
   //},
-  'test Model.find when only function passed': function () {
+  it('should Model.find when only function passed', function () {
     should.throws(
       function () {
         AppModel.find(function () {})
       }
     )
-  },
-  'test Model.find when empty options passed': function () {
+  })
+  it('should Model.find when empty options passed', function () {
     should.throws(
       function () {
         AppModel.find(null, function () {})
       }
     )
-  },
-  'test Model.find options correct when number passed': function () {
+  })
+  it('should Model.find options correct when number passed', function () {
     var gently = new (require('gently'))
-    var AppModel = require('../../app/models/app_model');
+    var AppModel = helper.require('/app/models/app_model');
     AppModel.tableName = "app_model"
     AppModel.db = {}
     gently.expect(AppModel.db, 'query', function (query, cb) {
@@ -46,10 +47,10 @@ module.exports = {
     });
 
     AppModel.find(10, function () {})
-  },
-  'test Model.find options correct when object passed': function () {
+  })
+  it('should Model.find options correct when object passed', function () {
     var gently = new (require('gently'))
-    var AppModel = require('../../app/models/app_model');
+    var AppModel = helper.require('/app/models/app_model');
     AppModel.tableName = "app_model"
     AppModel.db = {}
     gently.expect(AppModel.db, 'query', function (query, cb) {
@@ -58,10 +59,10 @@ module.exports = {
     });
 
     AppModel.find({where: {user_id: 15}}, function () {})
-  },
-  'test Model.find check that instance object is built': function () {
+  })
+  it('should Model.find check that instance object is built', function () {
     var gently = new (require('gently'))
-    var AppModel = require('../../app/models/app_model');
+    var AppModel = helper.require('/app/models/app_model');
     AppModel.tableName = "app_model"
     AppModel.db = {}
     var results = [{id: 15, user_id: 16}]
@@ -74,10 +75,10 @@ module.exports = {
       instance.user_id.should.equal(16)
       instance.isNewRecord.should.be.false
     })
-  },
-  'test Model.findAll options correct when object passed': function () {
+  })
+  it('should Model.findAll options correct when object passed', function () {
     var gently = new (require('gently'))
-    var AppModel = require('../../app/models/app_model');
+    var AppModel = helper.require('/app/models/app_model');
     AppModel.tableName = "app_model"
     AppModel.db = {}
     gently.expect(AppModel.db, 'query', function (query, cb) {
@@ -86,10 +87,10 @@ module.exports = {
     });
 
     AppModel.findAll({where: {user_id: 15}}, function () {})
-  },
-  'test Model.findAll check that instance object is built': function () {
+  })
+  it('should Model.findAll check that instance object is built', function () {
     var gently = new (require('gently'))
-    var AppModel = require('../../app/models/app_model');
+    var AppModel = helper.require('/app/models/app_model');
     AppModel.tableName = "app_model"
     AppModel.db = {}
     var results = [{id: 15}]
@@ -102,10 +103,10 @@ module.exports = {
       var instance = instances[0]
       instance.id.should.equal(15)
     })
-  },
-  'test Model.findQuery check that instance object is built': function () {
+  })
+  it('should Model.findQuery check that instance object is built', function () {
     var gently = new (require('gently'))
-    var AppModel = require('../../app/models/app_model');
+    var AppModel = helper.require('/app/models/app_model');
     AppModel.db = {}
     gently.expect(AppModel.db, 'query', function (query, cb) {
       query.should.equal("SELECT e.id FROM events")
@@ -118,10 +119,10 @@ module.exports = {
     AppModel.findQuery("SELECT e.id FROM events", function (err, results) {
       results[0].should.equal("wrapobj")
     })
-  },
-  'test Model#save new object': function () {
+  })
+  it('should Model#save new object', function () {
     var gently = new (require('gently'))
-    var AppModel = require('../../app/models/app_model');
+    var AppModel = helper.require('/app/models/app_model');
     var model = AppModel.build({name: "Evgeny"});
     model.tableName = "app_model"
     model.db = {}
@@ -134,10 +135,10 @@ module.exports = {
       instance.id.should.be.equal(1)
       instance.isNewRecord.should.be.false
     })
-  },
-  'test Model#save existing object': function () {
+  })
+  it('should Model#save existing object', function () {
     var gently = new (require('gently'))
-    var AppModel = require('../../app/models/app_model');
+    var AppModel = helper.require('/app/models/app_model');
     var model = AppModel.build({name: "Evgeny"}, {isNewRecord: false});
     model.tableName = "app_model"
     model.db = {};
@@ -150,9 +151,9 @@ module.exports = {
     model.save(function (err, instance) {
       instance.name.should.be.equal("Evgeny")
     })
-  },
-  'test Model#updateAttributes': function () {
-    var AppModel = require('../../app/models/app_model');
+  })
+  it('should Model#updateAttributes', function () {
+    var AppModel = helper.require('/app/models/app_model');
     AppModel.prototype.save = function (cb) {} // mock the function
     var model = AppModel.build({attr: "attrValue"});
 
@@ -169,9 +170,9 @@ module.exports = {
     model.attributes.length.should.equal(2);
     model.attributes[1].should.equal("attr");
     model.attributes[0].should.equal("name");
-  },
-  'test Model#addAttribute': function () {
-    var AppModel = require('../../app/models/app_model');
+  })
+  it('should Model#addAttribute', function () {
+    var AppModel = helper.require('/app/models/app_model');
     var model = AppModel.build({attr: "attrValue"});
     model.addAttribute('name', "Evgeny")
 
@@ -179,9 +180,9 @@ module.exports = {
     model.attributes.length.should.equal(2);
     model.attributes[0].should.equal("attr");
     model.attributes[1].should.equal("name");
-  },
-  'test Model#values': function () {
-    var AppModel = require('../../app/models/app_model');
+  })
+  it('should Model#values', function () {
+    var AppModel = helper.require('/app/models/app_model');
     var model = AppModel.build({name: "Name", email: "Email"});
     model.test = "Test";
     var result = model.values()
@@ -189,10 +190,10 @@ module.exports = {
     result.name.should.be.equal("Name");
     result.email.should.be.equal("Email");
     _.keys(result).length.should.be.equal(2);
-  },
-  'test Model.create': function () {
+  })
+  it('should Model.create', function () {
     var gently = new (require('gently'))
-    var AppModel = require('../../app/models/app_model');
+    var AppModel = helper.require('/app/models/app_model');
     var mock = {}
     gently.expect(AppModel, 'build', function (params, cb) {
       params.name.should.be.equal("Name")
@@ -200,10 +201,10 @@ module.exports = {
     });
     gently.expect(mock, 'save', function (query, cb) {});
     AppModel.create({name: "Name"}, function () {});
-  },
-  'test Model.destroy options correct when number passed': function () {
+  })
+  it('should Model.destroy options correct when number passed', function () {
     var gently = new (require('gently'))
-    var AppModel = require('../../app/models/app_model');
+    var AppModel = helper.require('/app/models/app_model');
     AppModel.tableName = "app_model"
     AppModel.db = {}
     gently.expect(AppModel.db, 'query', function (query, cb) {
@@ -212,10 +213,10 @@ module.exports = {
     });
 
     AppModel.destroy(10, function () {})
-  },
-  'test Model.destroy options correct when object passed': function () {
+  })
+  it('should Model.destroy options correct when object passed', function () {
     var gently = new (require('gently'))
-    var AppModel = require('../../app/models/app_model');
+    var AppModel = helper.require('/app/models/app_model');
     AppModel.tableName = "app_model"
     AppModel.db = {}
     gently.expect(AppModel.db, 'query', function (query, cb) {
@@ -224,10 +225,10 @@ module.exports = {
     });
 
     AppModel.destroy({where: {user_id: 15}}, function () {})
-  },
-  'test Model.destroyAll options correct when object passed': function () {
+  })
+  it('should Model.destroyAll options correct when object passed', function () {
     var gently = new (require('gently'))
-    var AppModel = require('../../app/models/app_model');
+    var AppModel = helper.require('/app/models/app_model');
     AppModel.tableName = "app_model"
     AppModel.db = {}
     gently.expect(AppModel.db, 'query', function (query, cb) {
@@ -236,26 +237,28 @@ module.exports = {
     });
 
     AppModel.destroyAll({where: {user_id: 15}}, function () {})
-  },
-  'test Model#pictureUrl': function () {
-    var AppModel = require('../../app/models/app_model');
+  })
+  it('should Model#pictureUrl', function () {
+    var AppModel = helper.require('/app/models/app_model');
     var instance = AppModel.build({name: "Name", id: 10});
 
-    gently.expect(gently.hijacked["../../lib/helper"], "pictureUrl", function (item, size) {
+    gently.expect(helper.hijacked["../../lib/helper"], "pictureUrl", function (item, size) {
       item.id.should.equal(10)
       size.should.equal("medium")
     })
     instance.pictureUrl("medium")
-  },
-  'test Model#webUrl': function () {
-    var AppModel = require('../../app/models/app_model');
+  })
+  it('should Model#webUrl', function () {
+    var AppModel = helper.require('/app/models/app_model');
     var instance = AppModel.build({name: "Name", id: 10});
     instance.api = "people"
 
-    gently.expect(gently.hijacked["../../lib/helper"], "webUrl", function (api, id) {
+    gently.expect(helper.hijacked["../../lib/helper"], "webUrl", function (api, id) {
       api.should.equal("people")
       id.should.equal(10)
     })
     instance.webUrl("medium")
-  },
-};
+  })
+})
+
+

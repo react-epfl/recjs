@@ -18,37 +18,38 @@ function before() {
     return {myasset: ['first', 'second.jade']}
   })
   html = htmlObj.init()
-}
-module.exports = {
-  'test javascripts, should generate one file when env=production': function () {
+})
+
+describe('html', function () {
+  it('should javascripts, should generate one file when env=production', function () {
     before()
 //console.log(gently.hijacked["./config"].getAssetsCSS())
     var htmlCode = html.javascripts("production", "myasset");
     htmlCode.should.equal('<script src="/js/cache/myasset.min.js"></script>');
-  },
-  'test stylesheets, should generate one file when env=production': function () {
+  })
+  it('should stylesheets, should generate one file when env=production', function () {
     before()
 
     var htmlCode = html.stylesheets("production", "myasset");
     htmlCode.should.equal('<link href="/css/cache/myasset.min.css" rel="stylesheet">');
-  },
-  'test stylesheets, should generate links to N files when env!=production': function () {
+  })
+  it('should stylesheets, should generate links to N files when env!=production', function () {
     before()
 
     var htmlCode = html.stylesheets('development', "myasset");
 
     htmlCode.should.equal( '<link href="/css/first.css" rel="stylesheet">'
                          + '<link href="/css/second.css" rel="stylesheet">')
-  },
-  'test javascripts, should generate links to N files when env!=production': function () {
+  })
+  it('should javascripts, should generate links to N files when env!=production', function () {
     before()
 
     var htmlCode = html.javascripts('development', "myasset");
 
     htmlCode.should.equal( '<script src="/js/first.js"></script>'
                          + '<script src="/js/second.js"></script>');
-  },
-  'test generation of cached assets based on config files': function () {
+  })
+  it('should generation of cached assets based on config files', function () {
     before()
 
     // create temporal files
@@ -97,14 +98,14 @@ module.exports = {
     content = fs.readFileSync("./public/js/cache/templ_myasset_all.js", 'utf8');
     fs.unlinkSync("./public/js/cache/templ_myasset_all.js")
     content.should.equal('app.Templates = {  "first": function anonymous(locals, attrs, escape, rethrow) {\nvar attrs = jade.attrs, escape = jade.escape, rethrow = jade.rethrow;\nvar buf = [];\nwith (locals || {}) {\nvar interp;\nbuf.push(\'<span>name</span>\');\n}\nreturn buf.join("");\n},  "second": function anonymous(locals, attrs, escape, rethrow) {\nvar attrs = jade.attrs, escape = jade.escape, rethrow = jade.rethrow;\nvar buf = [];\nwith (locals || {}) {\nvar interp;\nbuf.push(\'<span>address</span>\');\n}\nreturn buf.join("");\n},}');
-  },
-  'test templates, should generate one script tag when env=production': function () {
+  })
+  it('should templates, should generate one script tag when env=production', function () {
     before()
 
     var htmlCode = html.templates("production", "myasset");
     htmlCode.should.equal('<script src="/js/cache/templ_myasset.min.js"></script>');
-  },
-  'test templates, should generate a template and a script tag when env!=production': function () {
+  })
+  it('should templates, should generate a template and a script tag when env!=production', function () {
     before()
 
     var firstJS = fs.openSync("./public/views/first.jade", "w")
@@ -125,8 +126,8 @@ module.exports = {
 
     fs.unlinkSync("./public/views/first.jade")
     fs.unlinkSync("./public/views/second.jade")
-  },
-  'test minifyAssets': function () {
+  })
+  it('should minifyAssets', function () {
     before()
 
     var js = fs.openSync("./public/js/tmp/js_all.js", "w")
@@ -148,5 +149,6 @@ module.exports = {
       fs.unlinkSync("./public/css/tmp/css_all.css")
       fs.unlinkSync("./public/css/tmp/css.min.css")
     }, 500);
-  },
-}
+  })
+})
+

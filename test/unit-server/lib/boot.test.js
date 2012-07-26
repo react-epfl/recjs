@@ -8,8 +8,8 @@ var assert = require('assert')
 
 // mockup for app object
 
-module.exports = {
-  'test Boot loads social_controller': function () {
+describe('boot', function () {
+  it('should Boot loads social_controller', function () {
     var count = 0;
     var app = {
       get: function (route) {
@@ -27,8 +27,8 @@ module.exports = {
     setTimeout(function () {
       count.should.equal(1); // social.:format? is defined!
     }, 1000);
-  },
-  'test Boot loads remember_me_token model': function () {
+  })
+  it('should Boot loads remember_me_token model', function () {
     var app = {
       name: "my_app"
     , get: function (route) {}
@@ -53,6 +53,7 @@ module.exports = {
 
     }, 1000);
 
-  }
+  })
 
-};
+})
+

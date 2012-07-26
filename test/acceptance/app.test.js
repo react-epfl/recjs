@@ -4,7 +4,7 @@ var app = require('../app')
   , assert = require('assert')
   ;
 
-module.exports = {
+describe('app', function () {
   'POST /social.json': function () {
       assert.response(app, {
           url: '/social.json',
@@ -21,4 +21,4 @@ module.exports = {
           assert.equal('Test', document.title);
         });
     }
-}
+})

@@ -1,15 +1,15 @@
-var gently = new (require('gently'))
-  , assert = require('assert')
+var helper = require("test_helper")
+  , gently = new (require('gently'))
   , should = require('should')
-  , HomeController = require('../../app/controllers/home_controller')
+  , HomeController = helper.controller('home')
 
 var homeController = new HomeController();
 
 /**
  * Tests methods of auth_system
  */
-module.exports = {
-  'test init functions': function () {
+describe('recoms_controller', function () {
+  it('should init functions', function () {
     var homeController = new HomeController();
     homeController.loginFromCookies = {bind: function () {return "loginCookie"}}
     homeController.index = {bind: function () {return "index"}}
@@ -22,8 +22,8 @@ module.exports = {
     })
 
     homeController.init(app)
-  },
-  'test index action when user not logged in': function () {
+  })
+  it('should index action when user not logged in', function () {
     var req = {}
     var res = {}
     gently.expect(res, "render", function (jade, params) {
@@ -33,8 +33,8 @@ module.exports = {
     })
 
     homeController.index(req, res)
-  },
-  'test index action when user is logged in': function () {
+  })
+  it('should index action when user is logged in', function () {
     var app = {Calendar: {}, Event: {}}
       , req = {currentUser: {id: 1}, app: app}
       , res = {}
@@ -69,7 +69,8 @@ module.exports = {
     })
 
     homeController.index(req, res)
-  },
-}
+  })
+})
+
 
 

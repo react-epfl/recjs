@@ -6,8 +6,8 @@ var connect_rails = require('../../lib/connect-rails');
 
 // mocking things
 
-module.exports = {
-  'test Rails Session found': function () {
+describe('connect-rails', function () {
+  it('should Rails Session found', function () {
     var session = connect_rails.session({key: "_sportaxy_session"});
     var mockSession = {
       find: function (id, fn) {
@@ -23,8 +23,8 @@ module.exports = {
       req.session.user.should.equal(2);
       req.session.session_id.should.equal("session_id");
     });
-  },
-  'test Rails Session not found, create new': function () {
+  })
+  it('should Rails Session not found, create new', function () {
     var session = connect_rails.session({key: "_sportaxy_session"});
     var mockSession = {
       find: function (id, fn) {
@@ -54,8 +54,8 @@ module.exports = {
       req.session.user.should.equal(2);
       req.session.session_id.should.equal("session_id");
     });
-  },
-  'test MySQL initialization': function () {
+  })
+  it('should MySQL initialization', function () {
     var mysql = 'mysql';
     var req = res = {};
     var database = connect_rails.database(mysql);
@@ -63,8 +63,8 @@ module.exports = {
     database(req, res, function () {
       req.db.should.equal('mysql');
     })
-  },
-  'test currentUser when session is defined': function () {
+  })
+  it('should currentUser when session is defined', function () {
     var currentUser = connect_rails.currentUser();
 
     var app = {User: {find: function (user_id, fn) {
@@ -75,8 +75,8 @@ module.exports = {
     currentUser(req, null, function () {});
 
     req.currentUser.id.should.equal(2);
-  },
-  'test currentUser when no session': function () {
+  })
+  it('should currentUser when no session', function () {
     var currentUser = connect_rails.currentUser();
 
     var req = {session: {}};
@@ -84,8 +84,8 @@ module.exports = {
 
     should.not.exist(req.currentUser);
     // currentUser.should.equal(undefined);
-  },
-  'test set currentLang when cookie is defined': function () {
+  })
+  it('should set currentLang when cookie is defined', function () {
     var currentLang = connect_rails.currentLang();
 
     var req = {currentUser: undefined, cookies: {language: 'ru'}};
@@ -94,8 +94,8 @@ module.exports = {
 
     req.lang.should.equal('ru');
     // currentUser.should.equal(undefined);
-  },
-  'test set currentLang when cookie is not defined (default lang is en)': function () {
+  })
+  it('should set currentLang when cookie is not defined (default lang is en)', function () {
     var currentLang = connect_rails.currentLang();
 
     var req = {currentUser: undefined, cookies: {language: null}};
@@ -110,8 +110,8 @@ module.exports = {
     currentLang(req, res, function () {});
 
     req.lang.should.equal('en');
-  },
-  'test translationFunc for req.lang': function () {
+  })
+  it('should translationFunc for req.lang', function () {
     var app = "app";
     var req = {lang: "ru", app: app};
 
@@ -129,8 +129,8 @@ module.exports = {
     translationFunc(req, null, function () {});
 
     req.t.should.equal(fn);
-  },
-  'test flash is added to req': function () {
+  })
+  it('should flash is added to req', function () {
     var flashFunc = connect_rails.flash();
 
     gently.expect(gently.hijacked["./flash"], 'build', function (req) {
@@ -150,8 +150,8 @@ module.exports = {
 
     var res = {};
     flashFunc(req, res, next);
-  },
-  'test currentLang update user language when his language is different from cookies': function () {
+  })
+  it('should currentLang update user language when his language is different from cookies', function () {
     var currentLang = connect_rails.currentLang();
 
     var req = {currentUser: {language: 'en'}, cookies: {language: 'en'}};
@@ -162,5 +162,6 @@ module.exports = {
 
     var res = {};
     currentLang(req, res, function () {});
-  },
-};
+  })
+})
+

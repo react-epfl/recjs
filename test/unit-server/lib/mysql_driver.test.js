@@ -3,8 +3,8 @@ var assert = require('assert')
   , MysqlDriver = require('../../lib/mysql_driver')
   ;
 
-module.exports = {
-  'test MysqlDriver() constructor': function () {
+describe('mysql_driver', function () {
+  it('should MysqlDriver() constructor', function () {
     var options = {host: "127.0.0.1"}
     var mysql = new MysqlDriver("db", "user", "pass", options);
     mysql.config.database.should.equal("db")
@@ -12,13 +12,13 @@ module.exports = {
     mysql.config.password.should.equal("pass")
     mysql.config.host.should.equal("127.0.0.1")
     mysql.config.port.should.equal(3306)
-  },
-  'test MysqlDriver#getClient': function () {
+  })
+  it('should MysqlDriver#getClient', function () {
     var mysql = new MysqlDriver("db", "user", "pass");
     var client = mysql.getClient();
     client.host.should.equal("localhost")
-  },
-  'test MysqlDriver#query logging enabled': function () {
+  })
+  it('should MysqlDriver#query logging enabled', function () {
     var gently = new (require('gently'))
 
     var options = {host: "127.0.0.1"}
@@ -34,8 +34,8 @@ module.exports = {
     gently.expect(mockClient, 'end');
 
     mysql.query("sql", "callback");
-  },
-  'test MysqlDriver#query logging disabled': function () {
+  })
+  it('should MysqlDriver#query logging disabled', function () {
     var gently = new (require('gently'))
 
     var options = {host: "127.0.0.1"}
@@ -51,5 +51,5 @@ module.exports = {
     gently.expect(mockClient, 'end');
 
     mysql.query("sql", "callback");
-  },
-};
+  })
+})

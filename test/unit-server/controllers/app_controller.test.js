@@ -1,33 +1,32 @@
-var gently = new (require('gently'))
-  , assert = require('assert')
+var helper = require("test_helper")
+  , gently = new (require('gently'))
   , should = require('should')
-  , AppController = require('../../app/controllers/app_controller')
-  ;
+  , AppController = helper.controller('app')
 
 var appController = new AppController();
 
 /**
  * Tests methods of auth_system
  */
-module.exports = {
-  'test loggedIn req.currentUser exists': function () {
+describe('app_controller', function () {
+  it('should loggedIn req.currentUser exists', function () {
 
     var req = {};
     req.currentUser = {id: 2};
     appController.loggedIn(req).should.equal(true);
-  },
-  'test loggedIn req.currentUser does not exist': function () {
+  })
+  it('should loggedIn req.currentUser does not exist', function () {
 
     var req = {};
     appController.loggedIn(req).should.equal(false);
-  },
-  'test updateCurrentUser when user is undefined': function () {
+  })
+  it('should updateCurrentUser when user is undefined', function () {
     var req = {}
     appController.updateCurrentUser(req, null, null, function () {
       should.not.exist(req.currentUser);
     });
-  },
-  'test updateCurrentUser when user is defined': function () {
+  })
+  it('should updateCurrentUser when user is defined', function () {
     var sessionMock = {};
     var app = {Session: sessionMock};
 
@@ -43,14 +42,14 @@ module.exports = {
     var req = {url: "url", app: app};
     appController.updateCurrentUser(req, null, user, next);
 
-  },
-  'test loginFromCookies when no cookies defined': function () {
+  })
+  it('should loginFromCookies when no cookies defined', function () {
     var req = {cookies: {}};
 
     appController.loginFromCookies(req, null, function () {});
     should.not.exist(req.currentUser);
-  },
-  'test loginFromCookies when cookies defined and user not found': function () {
+  })
+  it('should loginFromCookies when cookies defined and user not found', function () {
     var userMock = null;
     var tokenMock = null;
 
@@ -65,8 +64,8 @@ module.exports = {
     appController.loginFromCookies(req, null, function () {});
     // user not defined
     should.not.exist(req.currentUser);
-  },
-  'test loginFromCookies when cookies defined and user found': function () {
+  })
+  it('should loginFromCookies when cookies defined and user found', function () {
     var userMock = "user";
     var tokenMock = {};
     var newTokenMock = {value: "token", expiresAt: new Date()};
@@ -90,8 +89,8 @@ module.exports = {
     should.exist(req.currentUser);
     req.currentUser.should.equal("user");
     // cookies set
-  },
-  'test loginRequired when user is logged in already': function () {
+  })
+  it('should loginRequired when user is logged in already', function () {
     // !!!order of expects matters!!!
     var session = {};
     var app = {Session: session};
@@ -112,8 +111,8 @@ module.exports = {
 
     // calls update session and then next function
     appController.loginRequired(req, null, next);
-  },
-  'test loginRequired redirect when user is not logged in': function () {
+  })
+  it('should loginRequired redirect when user is not logged in', function () {
     // !!!order of expects matters!!!
     var session = {};
     var app = {Session: session};
@@ -135,8 +134,8 @@ module.exports = {
     })
     // calls update session and then next function
     appController.loginRequired(req, res, function () {});
-  },
-  'test .redirectBackOrDefault when NO return_to redirects to default': function () {
+  })
+  it('should .redirectBackOrDefault when NO return_to redirects to default', function () {
     var app = {Session: {}}
     var req = {app: app, session: {return_to: ""}}
       , res = {}
@@ -150,8 +149,8 @@ module.exports = {
     })
 
     AppController.redirectBackOrDefault(req, res, "default")
-  },
-  'test .redirectBackOrDefault when return_to is DEFINED redirects to it': function () {
+  })
+  it('should .redirectBackOrDefault when return_to is DEFINED redirects to it', function () {
     var app = {Session: {}}
     var req = {app: app, session: {return_to: "return_to"}}
       , res = {}
@@ -165,6 +164,6 @@ module.exports = {
     })
 
     AppController.redirectBackOrDefault(req, res, "default")
-  },
+  })
 
-};
+})
