@@ -9,7 +9,7 @@
   }
 , "scripts": {
     "test": "./scripts/tests.sh"
-  , "start": "node app.js"
+  , "start": "node --debug app.js"
   }
 , "engines": { "node": ">= 0.8.0" }
 }
