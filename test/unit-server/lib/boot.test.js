@@ -1,12 +1,7 @@
-// subject-test.js
-// A test suite, describing 'subject'
-var assert = require('assert')
+var helper = require("test_helper")
   , gently = new (require('gently'))
-  , boot = require('../../config/boot')
   , should = require('should')
-  ;
-
-// mockup for app object
+  , boot = helper.require('/config/boot')
 
 describe('boot', function () {
   it('should Boot loads social_controller', function () {

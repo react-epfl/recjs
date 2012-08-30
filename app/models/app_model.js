@@ -1,10 +1,10 @@
 /**
- * AppAppModel
+ * AppModel
  */
 if (global.GENTLY) {require = GENTLY.hijack(require)};
 
-var QueryGenerator = require('../../lib/query_generator')
-  , helper = require('../../lib/helper')
+var helper = require('helper')
+	, QueryGenerator = helper.require('/lib/query_generator')
   , _ = require('underscore')._
 
 function AppModel() {}
@@ -218,9 +218,9 @@ AppModel.destroy = function (options, cb) {
 }
 
 /**
- * Deletes all objects from database
+ * Deletes all objects from db table
  *
- * @see AppModel.destroy
+ * @see AppModel.destroyAll
  */
 AppModel.destroyAll = function (options, cb) {
   var self = this
@@ -234,7 +234,11 @@ AppModel.destroyAll = function (options, cb) {
     //})
     cb(err, arr);
   }
-  return this.db.query(QueryGenerator.deleteQuery(this.tableName, options.where), callback)
+	if (options.where) {
+		return this.db.query(QueryGenerator.deleteQuery(this.tableName, options.where), callback)
+	} else {
+		return this.db.query("DELETE FROM `" + this.tableName + "`;", callback)
+	}
 }
 
 /**

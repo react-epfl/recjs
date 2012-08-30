@@ -5,9 +5,6 @@ var helper = require("test_helper")
 
 var appController = new AppController();
 
-/**
- * Tests methods of auth_system
- */
 describe('app_controller', function () {
   it('should loggedIn req.currentUser exists', function () {
 
@@ -167,3 +164,4 @@ describe('app_controller', function () {
   })
 
 })
+

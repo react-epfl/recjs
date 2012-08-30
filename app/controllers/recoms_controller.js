@@ -2,17 +2,19 @@
  * Home controller
  */
 
+if (global.GENTLY) {require = GENTLY.hijack(require)};
+
 var inherits = require('util').inherits
   , nodemailer = require('nodemailer')
   , Seq = require("seq")
-  , helper = require("../../lib/helper")
+  , helper = require('helper')
   , _ = require("underscore")._
 
 function RecomsController() {}
 module.exports = RecomsController;
 
 RecomsController.prototype.init = function (app) {
-  app.get( '/'
+  app.get( '/gadgets'
          , this.index.bind(this)
          )
   app.get( '/gadget/:id'

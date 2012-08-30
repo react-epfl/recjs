@@ -1,7 +1,7 @@
-var assert = require('assert')
+var helper = require("test_helper")
+  , gently = new (require('gently'))
   , should = require('should')
-  , MysqlDriver = require('../../lib/mysql_driver')
-  ;
+  , MysqlDriver = helper.require('/lib/mysql_driver')
 
 describe('mysql_driver', function () {
   it('should MysqlDriver() constructor', function () {
@@ -53,3 +53,4 @@ describe('mysql_driver', function () {
     mysql.query("sql", "callback");
   })
 })
+

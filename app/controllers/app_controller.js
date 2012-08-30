@@ -54,7 +54,6 @@ AppController.prototype.loginFromCookies = function (req, res, next) {
   var authToken = req.cookies.auth_token;
   if (authToken === undefined || req.currentUser !== undefined) {next();return;}
 
-  // var rememberToken = require('../models/remember_token').init(req.db);
   var _this = this;
   app.RememberMeToken.userByToken(authToken, function (user, token) {
     if (user) {

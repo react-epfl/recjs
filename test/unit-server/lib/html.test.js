@@ -1,57 +1,47 @@
-var gently = global.GENTLY = new (require('gently'))
-  , assert = require('assert')
+var helper = require("test_helper")
+  , gently = new (require('gently'))
   , should = require('should')
-  , helper = require('../../lib/helper')
-  , htmlObj = require('../../lib/html')
+  , htmlObj = helper.require('/lib/html')
   , fs = require('fs')
   , html
-
-function before() {
-  // mock the config code
-  gently.expect(gently.hijacked["./config"], "getAssetsCSS", function () {
-    return {myasset: ['first.css', 'second']}
-  })
-  gently.expect(gently.hijacked["./config"], "getAssetsJS", function () {
-    return {myasset: ['first', 'second.js']}
-  })
-  gently.expect(gently.hijacked["./config"], "getTemplates", function () {
-    return {myasset: ['first', 'second.jade']}
-  })
-  html = htmlObj.init()
-})
+  , publicUrl = helper.fullPath("/public")
 
 describe('html', function () {
-  it('should javascripts, should generate one file when env=production', function () {
-    before()
-//console.log(gently.hijacked["./config"].getAssetsCSS())
+  beforeEach(function () {
+    // mock the config code
+    gently.expect(helper.mock("/lib/config"), "getAssetsCSS", function () {
+      return {myasset: ['first.css', 'second']}
+    })
+    gently.expect(helper.mock("/lib/config"), "getAssetsJS", function () {
+      return {myasset: ['first', 'second.js']}
+    })
+    gently.expect(helper.mock("/lib/config"), "getTemplates", function () {
+      return {myasset: ['first', 'second.jade']}
+    })
+    html = htmlObj.init()
+  })
+
+  it('should generate one js file when env=production', function () {
     var htmlCode = html.javascripts("production", "myasset");
-    htmlCode.should.equal('<script src="/js/cache/myasset.min.js"></script>');
+    htmlCode.should.equal('<script src="http://static2.spacilla.com/cache/myasset.min.js"></script>');
   })
-  it('should stylesheets, should generate one file when env=production', function () {
-    before()
-
+  it('should generate one css file when env=production', function () {
     var htmlCode = html.stylesheets("production", "myasset");
-    htmlCode.should.equal('<link href="/css/cache/myasset.min.css" rel="stylesheet">');
+    htmlCode.should.equal('<link href="http://static2.spacilla.com/cache/myasset.min.css" rel="stylesheet">');
   })
-  it('should stylesheets, should generate links to N files when env!=production', function () {
-    before()
-
+  it('should generate links to N css files when env!=production', function () {
     var htmlCode = html.stylesheets('development', "myasset");
 
     htmlCode.should.equal( '<link href="/css/first.css" rel="stylesheet">'
                          + '<link href="/css/second.css" rel="stylesheet">')
   })
-  it('should javascripts, should generate links to N files when env!=production', function () {
-    before()
-
+  it('should generate links to N js files when env!=production', function () {
     var htmlCode = html.javascripts('development', "myasset");
 
     htmlCode.should.equal( '<script src="/js/first.js"></script>'
                          + '<script src="/js/second.js"></script>');
   })
   it('should generation of cached assets based on config files', function () {
-    before()
-
     // create temporal files
     var firstCSS = fs.openSync("./public/css/first.css", "w")
     fs.writeSync(firstCSS, "firstCSS");
@@ -78,36 +68,29 @@ describe('html', function () {
     fs.unlinkSync("./public/views/second.jade")
 
     // check if a cached file was created (exists)
-    assert.doesNotThrow(
-      function () {
-        fs.openSync("./public/css/cache/myasset_all.css", 'r');
-        fs.openSync("./public/js/cache/myasset_all.js", 'r');
-      },
-      Error
-    )
+		;(function(){
+			fs.openSync("./public/cache/myasset_all.css", 'r');
+			fs.openSync("./public/cache/myasset_all.js", 'r');
+		}).should.not.throw()
 
     // check if generated files content is correct
-    var content = fs.readFileSync("./public/css/cache/myasset_all.css", 'utf8');
-    fs.unlinkSync("./public/css/cache/myasset_all.css")
+    var content = fs.readFileSync("./public/cache/myasset_all.css", 'utf8');
+    fs.unlinkSync("./public/cache/myasset_all.css")
     content.should.equal("firstCSSsecondCSS");
 
-    content = fs.readFileSync("./public/js/cache/myasset_all.js", 'utf8');
-    fs.unlinkSync("./public/js/cache/myasset_all.js")
+    content = fs.readFileSync("./public/cache/myasset_all.js", 'utf8');
+    fs.unlinkSync("./public/cache/myasset_all.js")
     content.should.equal("firstJSsecondJS");
 
-    content = fs.readFileSync("./public/js/cache/templ_myasset_all.js", 'utf8');
-    fs.unlinkSync("./public/js/cache/templ_myasset_all.js")
+    content = fs.readFileSync("./public/cache/templ_myasset_all.js", 'utf8');
+    fs.unlinkSync("./public/cache/templ_myasset_all.js")
     content.should.equal('app.Templates = {  "first": function anonymous(locals, attrs, escape, rethrow) {\nvar attrs = jade.attrs, escape = jade.escape, rethrow = jade.rethrow;\nvar buf = [];\nwith (locals || {}) {\nvar interp;\nbuf.push(\'<span>name</span>\');\n}\nreturn buf.join("");\n},  "second": function anonymous(locals, attrs, escape, rethrow) {\nvar attrs = jade.attrs, escape = jade.escape, rethrow = jade.rethrow;\nvar buf = [];\nwith (locals || {}) {\nvar interp;\nbuf.push(\'<span>address</span>\');\n}\nreturn buf.join("");\n},}');
   })
   it('should templates, should generate one script tag when env=production', function () {
-    before()
-
     var htmlCode = html.templates("production", "myasset");
-    htmlCode.should.equal('<script src="/js/cache/templ_myasset.min.js"></script>');
+    htmlCode.should.equal('<script src="http://static0.spacilla.com/cache/templ_myasset.min.js"></script>');
   })
   it('should templates, should generate a template and a script tag when env!=production', function () {
-    before()
-
     var firstJS = fs.openSync("./public/views/first.jade", "w")
     fs.writeSync(firstJS, "span name", null, 'utf8');
     var secondJS = fs.openSync("./public/views/second.jade", "w")
@@ -127,28 +110,31 @@ describe('html', function () {
     fs.unlinkSync("./public/views/first.jade")
     fs.unlinkSync("./public/views/second.jade")
   })
-  it('should minifyAssets', function () {
-    before()
-
-    var js = fs.openSync("./public/js/tmp/js_all.js", "w")
+  it('should minifyAssets', function (done) {
+    var js = fs.openSync("./public/cache/test_js_all.js", "w")
     fs.writeSync(js, "var a, b\n var hello", null, 'utf8');
-    var css = fs.openSync("./public/css/tmp/css_all.css", "w")
+    var css = fs.openSync("./public/cache/test_css_all.css", "w")
     fs.writeSync(css, "/* hello comment */\n.id \n{\n color: white}", null, 'utf8')
 
-    html.minifyAssets('tmp');
-
-    setTimeout(function () {
-      var content = fs.readFileSync("./public/js/tmp/js.min.js", 'utf8')
+    html.minifyAssets('cache', false, function (par) {
+      var content = fs.readFileSync("./public/cache/test_js.min.js", 'utf8')
       content.should.equal( 'var a,b,hello')
 
-      content = fs.readFileSync("./public/css/tmp/css.min.css", 'utf8')
+      content = fs.readFileSync("./public/cache/test_css.min.css", 'utf8')
       content.should.equal( '.id{color:white}')
 
-      fs.unlinkSync("./public/js/tmp/js_all.js")
-      fs.unlinkSync("./public/js/tmp/js.min.js")
-      fs.unlinkSync("./public/css/tmp/css_all.css")
-      fs.unlinkSync("./public/css/tmp/css.min.css")
-    }, 500);
+      fs.unlinkSync("./public/cache/test_js.min.js")
+      fs.unlinkSync("./public/cache/test_css.min.css")
+
+      ;(function(){
+        fs.openSync("./public/cache/test_js_all.js")
+      }).should.throw()
+      ;(function(){
+        fs.openSync("./public/cache/test_css_all.css")
+      }).should.throw()
+
+      done()
+    })
   })
 })
 

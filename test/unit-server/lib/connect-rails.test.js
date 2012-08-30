@@ -1,8 +1,7 @@
-var should = require('should')
-  , gently = global.GENTLY = new (require('gently'))
-  ;
-
-var connect_rails = require('../../lib/connect-rails');
+var helper = require("test_helper")
+  , gently = new (require('gently'))
+  , should = require('should')
+  , connect_rails = helper.require('/lib/connect-rails')
 
 // mocking things
 
@@ -119,7 +118,7 @@ describe('connect-rails', function () {
     var fn = function () {}
 
     // console.log(gently);
-    gently.expect(gently.hijacked["./i18n"], 'setTranslateFunc', function (app, lang) {
+    gently.expect(helper.mock("/lib/i18n"), 'setTranslateFunc', function (app, lang) {
       app.should.equal("app");
       lang.should.equal("ru");
 
@@ -133,7 +132,7 @@ describe('connect-rails', function () {
   it('should flash is added to req', function () {
     var flashFunc = connect_rails.flash();
 
-    gently.expect(gently.hijacked["./flash"], 'build', function (req) {
+    gently.expect(helper.mock("/lib/flash"), 'build', function (req) {
       return {};
     });
 
@@ -152,10 +151,10 @@ describe('connect-rails', function () {
     flashFunc(req, res, next);
   })
   it('should currentLang update user language when his language is different from cookies', function () {
-    var currentLang = connect_rails.currentLang();
+    var currentLang = connect_rails.currentLang()
+  	var gently = new (require('gently'))
 
-    var req = {currentUser: {language: 'en'}, cookies: {language: 'en'}};
-
+    var req = {currentUser: {language: 'ru'}, cookies: {language: 'en'}};
     gently.expect(req.currentUser, 'updateAttributes', function (opts) {
       opts.language.should.equal('en');
     });

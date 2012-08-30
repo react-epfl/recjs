@@ -1,15 +1,15 @@
 // boot all needed classes
-var helper = require('../lib/helper');
+var helper = require('helper');
 
 /**
  * Loads all controllers
  */
-var AppController = require(__dirname + "/../app/controllers/app_controller");
+var AppController = helper.require("/app/controllers/app_controller");
 
 function loadControllers(app) {
   var fs = require("fs");
 
-  fs.readdir(__dirname + '/../app/controllers', function (err, files) {
+  fs.readdir(helper.fullPath('/app/controllers'), function (err, files) {
       if (err) {throw err;}
       files.forEach(function (file) {
         bootController(app, file);
@@ -20,7 +20,7 @@ function loadControllers(app) {
 function bootController(app, file) {
   // init controller and skip app_controller.js
   if (!file.match(/app_controller/) && file.match(/_controller.js/)) {
-    var Controller = require(__dirname + "/../app/controllers/"+file);
+    var Controller = helper.require("/app/controllers/"+file);
     helper.inherits(Controller, AppController);
 
     var controller = new Controller();
@@ -31,12 +31,12 @@ function bootController(app, file) {
 /**
  * Loads all models
  */
-var AppModel = require(__dirname + "/../app/models/app_model");
+var AppModel = helper.require("/app/models/app_model");
 
 function loadModels(app) {
   var fs = require("fs");
 
-  fs.readdir(__dirname + '/../app/models', function (err, files) {
+  fs.readdir(helper.fullPath('/app/models'), function (err, files) {
       if (err) {throw err;}
       files.forEach(function (file) {
         bootModel(app, file);
@@ -55,7 +55,7 @@ function bootModel(app, file) {
   // init model and skip app.js
   if (!file.match(/app_model/) && file.match(/js/)) {
     // export model constructor
-    var Model = require(__dirname + "/../app/models/"+file);
+    var Model = helper.require("/app/models/"+file);
     helper.inherits(Model, AppModel);
 
     // Define a globally available class for this model

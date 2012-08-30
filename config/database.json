@@ -1,16 +1,16 @@
 {
   "production": {
-    "database" : "gadgets"
+    "database" : "recjs"
   , "username" : "production"
   , "password" : "production"
   }
 , "development": {
-    "database" : "gadgets"
+    "database" : "recjs"
   , "username" : "root"
   , "password" : ""
   }
 , "test": {
-    "database" : "gadgets"
+    "database" : "recjs"
   , "username" : "root"
   , "password" : ""
   }

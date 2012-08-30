@@ -238,11 +238,23 @@ describe('app_model', function () {
 
     AppModel.destroyAll({where: {user_id: 15}}, function () {})
   })
+  it('should destroyAll without options', function () {
+    var gently = new (require('gently'))
+    var AppModel = helper.require('/app/models/app_model');
+    AppModel.tableName = "app_model"
+    AppModel.db = {}
+    gently.expect(AppModel.db, 'query', function (query, cb) {
+      query.should.equal("DELETE FROM `app_model`;")
+      cb(null, null)
+    });
+
+    AppModel.destroyAll({}, function () {})
+  })
   it('should Model#pictureUrl', function () {
     var AppModel = helper.require('/app/models/app_model');
     var instance = AppModel.build({name: "Name", id: 10});
 
-    gently.expect(helper.hijacked["../../lib/helper"], "pictureUrl", function (item, size) {
+    gently.expect(helper.mock("helper"), "pictureUrl", function (item, size) {
       item.id.should.equal(10)
       size.should.equal("medium")
     })
@@ -253,12 +265,11 @@ describe('app_model', function () {
     var instance = AppModel.build({name: "Name", id: 10});
     instance.api = "people"
 
-    gently.expect(helper.hijacked["../../lib/helper"], "webUrl", function (api, id) {
+    gently.expect(helper.mock("helper"), "webUrl", function (api, id) {
       api.should.equal("people")
       id.should.equal(10)
     })
     instance.webUrl("medium")
   })
 })
-
 
