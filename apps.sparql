@@ -1,0 +1,15 @@
+prefix dc: <http://purl.org/dc/terms/>
+prefix role: <http://purl.org/role/terms/>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+SELECT ?title, ?source, ?description, ?thumbnail, ?screenshot
+WHERE {
+
+?tool a role:OpenSocialGadget .
+OPTIONAL {?tool dc:title ?title .}
+OPTIONAL {?tool dc:source ?source .}
+OPTIONAL {?tool dc:description ?description .}
+OPTIONAL {?tool foaf:img ?screenshot .}
+OPTIONAL {?tool foaf:depiction ?thumbnail .}
+
+}
+
