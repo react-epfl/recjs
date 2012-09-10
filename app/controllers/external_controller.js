@@ -84,6 +84,78 @@ ExternalController.prototype.populate_apps = function (req, res) {
   });
 	
 };
+
+// apps query and pagination
+ExternalController.prototype.apps = function (req, res) {
+  var app = req.app
+		, params = req.query
+    , offset = params.offset ? params.offset : 0
+		, limit = params.limit ? params.limit : 10
+    , query = params.query
+    , where = ""
+
+  if (query) {
+    // replace all punctuation with %
+    query = "'%" + params.query.replace(/\W/g, "%") + "%'"
+    query = query.replace(/%{2,}/,"%") // then replace multiple % with a single one
+    where = "title like " + query + " or description like " + query
+  }
+
+  // build output object and then give it to view
+  var output = {};
+  Seq()
+    .seq(function getRecoms() {
+      var self = this;
+
+      app.App.findAll({offset: offset, limit: limit, where: where}, function (err, result) {
+        self(err, result)
+      })
+    })
+    .seq(function sendResponse(data) {
+      // console.log(output);
+      res.json(data)
+    })
+    .catch(function (err) {
+      res.json(err)
+    })
+
+};
+
+// bundles query and pagination
+ExternalController.prototype.bundles = function (req, res) {
+  var app = req.app
+		, params = req.query
+    , offset = params.offset ? params.offset : 0
+		, limit = params.limit ? params.limit : 10
+    , query = params.query
+    , where = ""
+
+  if (query) {
+    // replace all punctuation with %
+    query = "'%" + params.query.replace(/\W/g, "%") + "%'"
+    query = query.replace(/%{2,}/,"%") // then replace multiple % with a single one
+    where = "title like " + query + " or description like " + query
+  }
+
+  // build output object and then give it to view
+  var output = {};
+  Seq()
+    .seq(function getRecoms() {
+      var self = this;
+
+      app.Bundle.findAll({offset: offset, limit: limit, where: where}, function (err, result) {
+        self(err, result)
+      })
+    })
+    .seq(function sendResponse(data) {
+      // console.log(output);
+      res.json(data)
+    })
+    .catch(function (err) {
+      res.json(err)
+    })
+
+};
 // populates the db with bundles and bundles from widget store
 // sparql endpoint: http://role-widgetstore.eu/simplerdf/sparql
 // query is in bundles.sparql file
@@ -151,58 +223,4 @@ ExternalController.prototype.populate_bundles = function (req, res) {
 		.seq(function () {
 			res.json("success")
 		})
-};
-
-// apps query and pagination
-ExternalController.prototype.apps = function (req, res) {
-  var app = req.app
-		, params = req.query
-    , offset = params.offset ? params.offset : 0
-		, limit = params.limit ? params.limit : 10
-
-  // build output object and then give it to view
-  var output = {};
-  Seq()
-    .seq(function getRecoms() {
-      var self = this;
-
-      app.App.findAll({offset: offset, limit: limit}, function (err, result) {
-        self(err, result)
-      })
-    })
-    .seq(function sendResponse(data) {
-      // console.log(output);
-      res.json(data)
-    })
-    .catch(function (err) {
-      res.json(err)
-    })
-
-};
-
-// bundles query and pagination
-ExternalController.prototype.bundles = function (req, res) {
-  var app = req.app
-		, params = req.query
-    , offset = params.offset ? params.offset : 0
-		, limit = params.limit ? params.limit : 10
-
-  // build output object and then give it to view
-  var output = {};
-  Seq()
-    .seq(function getRecoms() {
-      var self = this;
-
-      app.Bundle.findAll({offset: offset, limit: limit}, function (err, result) {
-        self(err, result)
-      })
-    })
-    .seq(function sendResponse(data) {
-      // console.log(output);
-      res.json(data)
-    })
-    .catch(function (err) {
-      res.json(err)
-    })
-
 };
