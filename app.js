@@ -36,20 +36,20 @@ app.configure('development', function () {
 
 app.configure('production', function () {
   // generate pid file
-  fs.writeFile( '/home/vohtaski/public_html/sportaxy.com/shared/pids/node.pid'
+  fs.writeFile( '/recjs/shared/pids/node.pid'
               , process.pid + "\n"
               , function (err) {
                   if (err) throw err;
                 }
               )
 
-  host = "173.203.210.210";
+  host = "127.0.0.1";
 
   db_config = db_config.production;
   db_logging = false;
 
-  app.set('server_email', "Sportaxy <info@sportaxy.com>")
-  app.set('server_url', "http://sportaxy.com")
+  app.set('server_email', "Recjs <info@recjs.com>")
+  app.set('server_url', "http://recjs.com")
 
   var oneYear = 31557600000;
   app.use(express.static(__dirname + '/public', { maxAge: oneYear }));
@@ -60,13 +60,13 @@ app.configure('test', function () {
   db_config = db_config.test;
   db_logging = true;
 
-  app.set('server_email', "Sportaxy Test <test@sportaxy.com>")
+  app.set('server_email', "Recjs Test <test@recjs.com>")
   app.set('server_url', "http://localhost:8000")
 
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 })
 
-// 'sportaxy_development', 'root', null
+// 'recjs_development', 'root', null
 mysql = new MysqlDriver( db_config.database
                        , db_config.username
                        , db_config.password
