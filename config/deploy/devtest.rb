@@ -34,7 +34,7 @@ namespace :deploy do
   task :restart do
     # !important nohup is needed so that daemon process is no killed
     #run "nohup /etc/init.d/xsportaxy restart > tmp/nohup.out; cat tmp/nohup.out"
-    run "cat /recjs/shared/pids/node.pid | xargs kill -9"
+    #run "cat /recjs/shared/pids/node.pid | xargs kill -9"
     run "PWD=/recjs/current NODE_ENV=production /usr/local/bin/node /recjs/current/app.js >> /recjs/shared/log/node.log 2>&1 &"
   end
 
