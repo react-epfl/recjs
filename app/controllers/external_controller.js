@@ -85,6 +85,19 @@ ExternalController.prototype.populate_apps = function (req, res) {
 	
 };
 
+// builds a proper where clause for bag-of-words search
+function buildWhereClause (query) {
+  var where = ""
+
+  if (query) {
+    query = query.replace(/\W/g, " ") // replace all punctuation with spaces
+    query = query.replace(/ {2,}/g," ") // then replace multiple spaces with a single one
+    query = helper.strip(query)
+    query = "'(" + query.replace(/ /g, "|") + ")'"
+    where = "title REGEXP " + query + " OR description REGEXP " + query
+  }
+  return where
+}
 // apps query and pagination
 ExternalController.prototype.apps = function (req, res) {
   var app = req.app
@@ -92,14 +105,7 @@ ExternalController.prototype.apps = function (req, res) {
     , offset = params.offset ? params.offset : 0
 		, limit = params.limit ? params.limit : 10
     , query = params.query
-    , where = ""
-
-  if (query) {
-    // replace all punctuation with %
-    query = "'%" + params.query.replace(/\W/g, "%") + "%'"
-    query = query.replace(/%{2,}/,"%") // then replace multiple % with a single one
-    where = "title like " + query + " or description like " + query
-  }
+    , where = buildWhereClause(query)
 
   // build output object and then give it to view
   var output = {};
@@ -128,14 +134,7 @@ ExternalController.prototype.bundles = function (req, res) {
     , offset = params.offset ? params.offset : 0
 		, limit = params.limit ? params.limit : 10
     , query = params.query
-    , where = ""
-
-  if (query) {
-    // replace all punctuation with %
-    query = "'%" + params.query.replace(/\W/g, "%") + "%'"
-    query = query.replace(/%{2,}/,"%") // then replace multiple % with a single one
-    where = "title like " + query + " or description like " + query
-  }
+    , where = buildWhereClause(query)
 
   // build output object and then give it to view
   var output = {};
