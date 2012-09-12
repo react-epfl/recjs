@@ -18,22 +18,22 @@ role :db,  "128.178.24.12", :primary => true
 namespace :deploy do
 
   task :start do
-    #run "nohup /etc/init.d/xsportaxy start > tmp/nohup.out; cat tmp/nohup.out"
-    run "sudo launchctl load -w /Library/LaunchDaemons/com.recjs.plist"
+    sudo "launchctl start com.recjs"
   end
 
   task :status do
-    run "sudo launchctl list com.recjs"
+    sudo "launchctl list com.recjs"
   end
 
   task :stop do
-    run "sudo launchctl unload -w /Library/LaunchDaemons/com.recjs.plist"
+    sudo 'launchctl list com.recjs > /dev/null 2>&1; if [ $? -eq 0 ];then sudo launchctl stop com.recjs;fi'
   end
 
   desc "Restart RecJS service"
   task :restart do
-    #run "sudo launchctl stop"
-    # start happens automatically by launchctl
+    # check if the process is running, if so, restart
+    sudo 'launchctl list com.recjs > /dev/null 2>&1; if [ $? -eq 0 ];then sudo launchctl stop com.recjs;fi'
+    sudo "launchctl start com.recjs"
   end
 
   desc "Populates apps and bundles from widget store"

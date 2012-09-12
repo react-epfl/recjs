@@ -18,22 +18,30 @@ role :db,  "128.178.24.10", :primary => true
 namespace :deploy do
 
   task :start do
-    run "nohup /etc/init.d/xsportaxy start > tmp/nohup.out; cat tmp/nohup.out"
+    sudo "launchctl start com.recjs"
   end
 
   task :status do
-    run "/etc/init.d/xsportaxy status"
+    sudo "launchctl list com.recjs"
   end
 
   task :stop do
-    run "/etc/init.d/xsportaxy stop"
+    sudo 'launchctl list com.recjs > /dev/null 2>&1; if [ $? -eq 0 ];then sudo launchctl stop com.recjs;fi'
   end
 
-  desc "Restart Node Sportaxy"
+  desc "Restart RecJS service"
   task :restart do
-    # !important nohup is needed so that daemon process is no killed
-    run "nohup /etc/init.d/xsportaxy restart > tmp/nohup.out; cat tmp/nohup.out"
+    # check if the process is running, if so, restart
+    sudo 'launchctl list com.recjs > /dev/null 2>&1; if [ $? -eq 0 ];then sudo launchctl stop com.recjs;fi'
+    sudo "launchctl start com.recjs"
   end
+
+  desc "Populates apps and bundles from widget store"
+  task :populate do
+    run "curl http://localhost:9000/external/populate_apps"
+    run "curl http://localhost:9000/external/populate_bundles"
+  end
+
 
 
   # task :update_code, :roles => [:app, :db, :web] do
