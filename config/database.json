@@ -1,8 +1,8 @@
 {
   "production": {
     "database" : "recjs"
-  , "username" : "production"
-  , "password" : "production"
+  , "username" : "root"
+  , "password" : ""
   }
 , "development": {
     "database" : "recjs"
