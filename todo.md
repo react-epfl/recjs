@@ -4,4 +4,5 @@
 
 2. Database schema
 
-3. P
+3. To call updates you have to call at graasp server this for now
+curl http://localhost:9000/external/populate_apps
