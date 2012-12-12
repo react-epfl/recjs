@@ -9,19 +9,22 @@ var crypto = require('crypto')
   , helper = require('helper')
   , Seq = require("seq")
 
-function App() {
+//function App() {
 
-}
-module.exports = App
-
-App.method1 = function() {
-  var app = this.app()
-
-  return 'smth'
+//}
+module.exports =
+{ title: String
+, source: String
 }
 
-App.prototype.method2 = function() {
-  var app = this.app()
-  return 'foo'
-}
+//App.method1 = function() {
+  //var app = this.app()
+
+  //return 'smth'
+//}
+
+//App.prototype.method2 = function() {
+  //var app = this.app()
+  //return 'foo'
+//}
 

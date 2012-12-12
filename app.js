@@ -18,6 +18,9 @@ var express = require('express')
   , db_logging
   , parseCookie = require('connect').utils.parseCookie
   //, recoms = require('recoms')
+  , mongoose = require('mongoose')
+  , db = mongoose.createConnection('localhost', 'test')
+  , Schema = mongoose.Schema
 
 var app = module.exports = express.createServer()
 
@@ -73,7 +76,11 @@ mysql = new MysqlDriver( db_config.database
                        , {logging: db_logging}
                        )
 
-app.db = mysql;
+
+
+//app.db = mysql;
+app.db = db;
+app.Schema = Schema;
 
 // mysql.user = app.settings.db_config.username;
 // mysql.password = app.settings.db_config.password;
