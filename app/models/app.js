@@ -15,6 +15,9 @@ var crypto = require('crypto')
 module.exports =
 { title: String
 , source: String
+, thumbnail: String
+, screenshot: String
+, description: String
 }
 
 //App.method1 = function() {

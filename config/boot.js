@@ -78,7 +78,7 @@ function bootModel(app, file) {
     //Model.classOf = fileName
     //Model.prototype.classOf = fileName
 
-    app[modelName] = Model;
+    app[modelName] = app.db.model(modelName, Model);
   };
 }
 

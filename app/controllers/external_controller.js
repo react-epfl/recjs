@@ -17,6 +17,7 @@ function ExternalController() {}
 module.exports = ExternalController;
 
 ExternalController.prototype.init = function (app) {
+  // "/external/apps?limit=10&offset=11&query=apple"
   app.get( '/external/populate_apps'
          , this.populate_apps.bind(this)
          )
@@ -50,6 +51,7 @@ ExternalController.prototype.populate_apps = function (req, res) {
     , path: '/simplerdf/sparql?query=prefix+dc%3A+<http%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F>%0D%0Aprefix+role%3A+<http%3A%2F%2Fpurl.org%2Frole%2Fterms%2F>%0D%0Aprefix+foaf%3A+<http%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F>%0D%0ASELECT+%3Ftitle+%3Fsource+%3Fdescription+%3Fthumbnail+%3Fscreenshot%0D%0A%7B%0D%0A%3Ftool+a+role%3AOpenSocialGadget+.%0D%0AOPTIONAL+%7B%3Ftool+dc%3Atitle+%3Ftitle+.%7D%0D%0AOPTIONAL+%7B%3Ftool+dc%3Asource+%3Fsource+.%7D%0D%0AOPTIONAL+%7B%3Ftool+dc%3Adescription+%3Fdescription+.%7D%0D%0AOPTIONAL+%7B%3Ftool+foaf%3Aimg+%3Fscreenshot+.%7D%0D%0AOPTIONAL+%7B%3Ftool+foaf%3Adepiction+%3Fthumbnail+.%7D%0D%0A%0D%0A%7D%0D%0A&output=json'
     }
 
+  // get data from widget store
   http.get(options, function (response) {
     response.on('data', function (chunk) {
       data += chunk;
@@ -59,8 +61,12 @@ ExternalController.prototype.populate_apps = function (req, res) {
 
       Seq()
         .seq(function () {
+          var _this = this
+
           //clear db with previous data
-          app.App.destroyAll({}, this)
+          app.App.remove(function () {
+            _this()
+          })
         })
         .set(results)
         .parEach(function (result) {
@@ -70,7 +76,8 @@ ExternalController.prototype.populate_apps = function (req, res) {
             result[key] = val.value
           })
           // put into db
-          app.App.create(result, function (err) {
+          var item = new app.App( result )
+          item.save(function (err) {
             _this(err)
           })
         })
@@ -86,27 +93,33 @@ ExternalController.prototype.populate_apps = function (req, res) {
 };
 
 // builds a proper where clause for bag-of-words search
-function buildWhereClause (query) {
-  var where = ""
+function buildConditions (query) {
+  var conditions = {}
 
   if (query) {
     query = query.replace(/\W/g, " ") // replace all punctuation with spaces
     query = query.replace(/ {2,}/g," ") // then replace multiple spaces with a single one
     query = helper.strip(query)
-    query = "'(" + query.replace(/ /g, "|") + ")'"
-    where = "title REGEXP " + query + " OR description REGEXP " + query
+    if (query.length > 1) {
+      // regex: /(word1)|(word2)/i
+      query = "(" + query.replace(/ /g, ")|(") + ")"
+
+      conditions = { $or: [
+        { title: new RegExp(query, "i") }
+      , { description: new RegExp(query, "i") }
+      ] }
+    }
   }
-  return where
+  return conditions
 }
 // apps query and pagination
 ExternalController.prototype.apps = function (req, res) {
-  debugger
   var app = req.app
     , params = req.query
     , offset = params.offset ? params.offset : 0
     , limit = params.limit ? params.limit : 10
     , query = params.query
-    , where = buildWhereClause(query)
+    , conditions = buildConditions(query)
 
   // build output object and then give it to view
   var output = {};
@@ -114,9 +127,12 @@ ExternalController.prototype.apps = function (req, res) {
     .seq(function getRecoms() {
       var self = this;
 
-      app.App.findAll({offset: offset, limit: limit, where: where}, function (err, result) {
-        self(err, result)
-      })
+      app.App.find( conditions
+                  , 'title source screenshot thumbnail description'
+                  , {limit: limit, skip: offset}
+                  , function (err, result) {
+                    self(err, result)
+                  })
     })
     .seq(function sendResponse(data) {
       // console.log(output);
@@ -135,7 +151,7 @@ ExternalController.prototype.bundles = function (req, res) {
     , offset = params.offset ? params.offset : 0
     , limit = params.limit ? params.limit : 10
     , query = params.query
-    , where = buildWhereClause(query)
+    , conditions = buildConditions(query)
 
   // build output object and then give it to view
   var output = {};
