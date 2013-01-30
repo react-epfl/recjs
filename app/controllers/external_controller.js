@@ -160,8 +160,7 @@ ExternalController.prototype.bundles = function (req, res) {
       var self = this;
 
       app.Bundle.find( conditions
-                  //, 'title source screenshots thumbnail'
-                  , 'title source screenshots thumbnail description apps'
+                  , 'title screenshots thumbnail description apps'
                   , {limit: limit, skip: offset}
                   , function (err, result) {
                     self(err, result)
@@ -253,10 +252,6 @@ ExternalController.prototype.populate_bundles = function (req, res) {
 
         // add apps
         bundle.apps = apps[uri]
-
-        // build source as a request to Graasp for omdl bundle
-        var source = "http://graasp.epfl.ch/bundle/"+encodeURIComponent(uri) + ".xml"
-        bundle.source = source
 
         arr.push(bundle)
       })
