@@ -159,9 +159,13 @@ ExternalController.prototype.bundles = function (req, res) {
     .seq(function getRecoms() {
       var self = this;
 
-      app.Bundle.findAll({offset: offset, limit: limit, where: where}, function (err, result) {
-        self(err, result)
-      })
+      app.Bundle.find( conditions
+                  //, 'title source screenshots thumbnail'
+                  , 'title source screenshots thumbnail description apps'
+                  , {limit: limit, skip: offset}
+                  , function (err, result) {
+                    self(err, result)
+                  })
     })
     .seq(function sendResponse(data) {
       // console.log(output);
@@ -171,72 +175,145 @@ ExternalController.prototype.bundles = function (req, res) {
       res.json(err)
     })
 
-};
+}
+
 // populates the db with bundles and bundles from widget store
 // sparql endpoint: http://role-widgetstore.eu/simplerdf/sparql
 // query is in bundles.sparql file
+// as a source it provides graasp urls, and then graasp serves the OMDL file for the bundle
 ExternalController.prototype.populate_bundles = function (req, res) {
   var app = req.app
+    , bundles = []
+    , screenshots = {}
+    , apps = {}
 
-  var http = require("http")
-    , data = ""
-
-  var options =
-    { host: 'role-widgetstore.eu'
-    , port: 80
-    , path: '/simplerdf/sparql?query=prefix+dc%3A+<http%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F>%0D%0Aprefix+role%3A+<http%3A%2F%2Fpurl.org%2Frole%2Fterms%2F>%0D%0Aprefix+foaf%3A+<http%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F>%0D%0ASELECT+%3Ftitle+%3Fsource+%3Fdescription+%3Fthumbnail+%3Fscreenshot%0D%0A%7B%0D%0A%3Ftool+a+role%3AOpenSocialGadget+.%0D%0AOPTIONAL+%7B%3Ftool+dc%3Atitle+%3Ftitle+.%7D%0D%0AOPTIONAL+%7B%3Ftool+dc%3Asource+%3Fsource+.%7D%0D%0AOPTIONAL+%7B%3Ftool+dc%3Adescription+%3Fdescription+.%7D%0D%0AOPTIONAL+%7B%3Ftool+foaf%3Aimg+%3Fscreenshot+.%7D%0D%0AOPTIONAL+%7B%3Ftool+foaf%3Adepiction+%3Fthumbnail+.%7D%0D%0A%0D%0A%7D%0D%0A&output=json'
-    }
-
-    //TODO: enable once support exists in ROLE
-  //http.get(options, function (response) {
-    //response.on('data', function (chunk) {
-      //data += chunk;
-    //});
-    //response.on('end', function () {
-      //var results = JSON.parse(data).results.bindings
-
-      //Seq()
-        //.seq(function () {
-          ////clear db with previous data
-          //app.App.destroyAll({}, this)
-        //})
-        //.set(results)
-        //.parEach(function (result) {
-          //var _this = this
-          //// build the object for db
-          //_.each(result, function (val, key) {
-            //result[key] = val.value
-          //})
-          //// put into db
-          //app.App.create(result, function (err) {
-            //_this(err)
-          //})
-        //})
-        //.seq(function () {
-          //res.json("success")
-        //})
-    //});
-  //}).on('error', function (e) {
-    //console.log("Got error: " + e.message);
-    //res.json(e.message)
-  //});
-
-
-  var db = [ { "description": "Learn a foreign language by reading text of your choice on the Web with the Language Resource Browser widget. Select words you do not know and send them to the Translator widget to see translations in your own language. Collect the words most important to you and train them in the Vocabulary Trainer widget. It will present words and ask you to translate them, helping you to focus on those hard to remember.", "screenshot": "http://www.role-widgetstore.eu/sites/default/files/imagecache/bundle_400x400/images/screenshots/2012-03-22%2015%2038%2011.png", "thumbnail": "http://www.role-widgetstore.eu/sites/default/files/imagecache/thumbnail/images/thumbnails/2012-03-22%2015%2038%2011.png", "title": "LEARN A FOREIGN LANGUAGE BY READING TEXT", "source": "http://iamac71.epfl.ch/omdl.xml" }, { "description": "This widget bundle supports user in searching for learning content related to an interesting subject and organizing it in a personal learning environment, for example in iGoogle. To use the widget bundle one has to create an account by personal learning environment or by learning management system, add the widget bundle and create a login or user for the widgets included. This widget bundle consists of two widgets: Media Search Widget and Media List Widget, which serve to find learning content and to organize it in media lists. Tagging, sharing and commenting functionalities as well as collaborative creating of media lists are planned.", "screenshot": "http://www.role-widgetstore.eu/sites/default/files/imagecache/bundle_400x400/images/screenshots/2012-03-22%2016%2004%2026_0.png", "thumbnail": "http://www.role-widgetstore.eu/sites/default/files/imagecache/thumbnail/images/thumbnails/2012-03-22%2016%2004%2026.png", "title": "SEARCH AND ORGANIZE MEDIA", "source": "http://iamac71.epfl.ch/omdl.xml" }, { "description": "Creating an audio self-presentation in French widget bundle includes four main widgets: a translator widget, a spell checker, a text-to speech engine and a recording widget, and some additional tools such as a CAM widget, a business dictionary and a conjugation tool. The four main widgets are used to create a self-presentation in French language, the additional widgets are to assist student in his learning activities and to collect usage data. This widget bundle is helpful in a language learning context and can be used to complete different tasks, such as learning vocabulary, improvement of pronunciation, producing of texts and audio-files, etc.", "screenshot": "http://www.role-widgetstore.eu/sites/default/files/imagecache/bundle_400x400/images/screenshots/Figure%201_0.png", "thumbnail": "http://www.role-widgetstore.eu/sites/default/files/imagecache/thumbnail/images/thumbnails/Figure%204_0.png", "title": "CREATING AN AUDIO SELF-PRESENTATION IN FRENCH", "source": "http://iamac71.epfl.ch/omdl.xml" }, { "description": "The bundle for creating a learning plan using activity recommendations consists of “Activity Recommender” and “To-Learn list” widgets. The bundle guides the learner through the learning process by recommending learning activities and provides support for compiling a learning plan.", "screenshot": "http://www.role-widgetstore.eu/sites/default/files/imagecache/bundle_400x400/images/screenshots/artl.gif", "thumbnail": "http://www.role-widgetstore.eu/sites/default/files/imagecache/thumbnail/images/thumbnails/artl.gif", "title": "CREATING A LEARNING PLAN USING ACTIVITY RECOMMENDATIONS", "source": "http://iamac71.epfl.ch/omdl.xml" }, { "description": "This bundle consists of two widgets. The first one can be used for goal setting and self-evaluation regarding aquired competences. The other one gives an overview of the defined goals and competences. Both require and Open App context (ROLE SDK or ROLE Sandbox). These widgets are technical demonstrators.", "screenshot": "http://www.role-widgetstore.eu/sites/default/files/imagecache/bundle_400x400/images/screenshots/share-you-experience-bundle-widget.png", "thumbnail": "http://www.role-widgetstore.eu/sites/default/files/imagecache/thumbnail/images/thumbnails/share-you-experience-bundle-thumbnail.png", "title": "SHARE YOUR EXPERIENCE", "source": "http://iamac71.epfl.ch/omdl.xml" }, { "description": "The bundle contains two widgets, one generic event reciever and one widget from where a range of different events can be sent out.", "screenshot": "http://www.role-widgetstore.eu/sites/default/files/imagecache/thumbnail/images/thumbnails/OALogo.png", "thumbnail": "http://www.role-widgetstore.eu/sites/default/files/imagecache/thumbnail/images/thumbnails/OALogo.png", "title": "TESTING EVENTS COMMUNICATION", "source": "http://iamac71.epfl.ch/omdl.xml" } ]
   Seq()
-    .seq(function () {
-      //clear db with previous data
-      app.Bundle.destroyAll({}, this)
+    //clear db with previous data
+    .par(function () {
+      var _this = this
+      app.Bundle.remove(function () { _this() })
     })
-    .set(db)
+    // get bundles from widget store
+    .par(function () {
+      var _this = this
+      var uri = '/simplerdf/sparql?query=prefix+dc%3A+<http%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F>%0D%0Aprefix+role%3A+<http%3A%2F%2Fpurl.org%2Frole%2Fterms%2F>%0D%0Aprefix+foaf%3A+<http%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F>%0D%0Aselect+*%0D%0AWHERE+%7B%0D%0A%3Fbundle+a+role%3Abundle+.%0D%0A%3Fbundle+dc%3Atitle+%3Ftitle+.%0D%0AOPTIONAL+%7B%3Fbundle+dc%3Adescription+%3Fdescription+.%7D%0D%0AOPTIONAL+%7B%3Fbundle+foaf%3Adepicts+%3Fthumbnail+.%7D%0D%0A%7D%0D%0A&output=json'
+      getData(uri, function (results) {
+        _.each(results, function (result) {
+          var item = resultToHash(result)
+          bundles.push(item)
+        })
+        _this()
+      })
+    })
+    // get screenshots for a bundle from widget store
+    .par(function () {
+      var _this = this
+      var uri = '/simplerdf/sparql?query=prefix+role%3A+<http%3A%2F%2Fpurl.org%2Frole%2Fterms%2F>%0D%0Aprefix+foaf%3A+<http%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F>%0D%0Aselect+*%0D%0AWHERE+%7B%0D%0A%3Fbundle+a+role%3Abundle+.%0D%0A%3Fbundle+foaf%3Aimg+%3Fscreenshot+.%0D%0A%7D%0D%0A&output=json'
+      getData(uri, function (results) {
+        _.each(results, function (result) {
+          var item = resultToHash(result)
+            , uri = item.bundle
+          if (screenshots[uri]) {
+            screenshots[uri] = screenshots[uri] + "," + item.screenshot
+          } else {
+            screenshots[uri] = item.screenshot
+          }
+
+        })
+        _this()
+      })
+    })
+    // get apps for a bundle from widget store
+    .par(function () {
+      var _this = this
+      var uri = '/simplerdf/sparql?query=prefix+dcterms%3A+<http%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F>%0D%0Aprefix+role%3A+<http%3A%2F%2Fpurl.org%2Frole%2Fterms%2F>%0D%0A%0D%0ASELECT+%3Fbundle+%3Fsrc%0D%0AWHERE+%7B%0D%0A++%3Fbundle+rdf%3Atype+role%3Abundle+.%0D%0A++%3Fbundle+role%3AtoolConfiguration+%3Fconfiguration+.%0D%0A++%3Fconfiguration+role%3Atool+%3Ftool+.%0D%0A++%3Ftool+dcterms%3Asource+%3Fsrc+.%0D%0A%7D%0D%0A&output=json'
+      getData(uri, function (results) {
+        _.each(results, function (result) {
+          var item = resultToHash(result)
+            , uri = item.bundle
+          if (apps[uri]) {
+            apps[uri] = apps[uri] + "," + item.src
+          } else {
+            apps[uri] = item.src
+          }
+
+        })
+        _this()
+      })
+    })
+    // since a bundle can have several screenshots and several apps, we create and array of them
+    // for each bundle
+    .seq(function () {
+      // process all the rows received from widget store
+      var arr = []
+      _.each(bundles, function (bundle) {
+        var uri = bundle.bundle //get the uri from bundle object
+        // add screenshots
+        bundle.screenshots = screenshots[uri]
+
+        // add apps
+        bundle.apps = apps[uri]
+
+        // build source as a request to Graasp for omdl bundle
+        var source = "http://graasp.epfl.ch/bundle/"+encodeURIComponent(uri) + ".xml"
+        bundle.source = source
+
+        arr.push(bundle)
+      })
+
+      this(null, arr)
+    })
+    .flatten()
     .parEach(function (result) {
       var _this = this
       // put into db
-      app.Bundle.create(result, function (err) {
+      var item = new app.Bundle( result )
+      item.save(function (err) {
         _this(err)
       })
     })
     .seq(function () {
       res.json("success")
     })
-};
+}
+
+// gets data from the widgets store with URL = url and passed it to callback
+// passes retrieved data to callback
+function getData (url, cb) {
+  var http = require("http")
+    , data = ""
+
+  var options =
+    { host: 'role-widgetstore.eu'
+    , port: 80
+    , path: url
+    }
+
+  // get data from widget store
+  http.get(options, function (response) {
+    response.on('data', function (chunk) {
+      data += chunk;
+    });
+    response.on('end', function () {
+      var results = JSON.parse(data).results.bindings
+
+      cb(results)
+    })
+  }).on('error', function (e) {
+    console.log("Got error: " + e.message);
+    res.json(e.message)
+  })
+}
+
+// parses item from rdf request into object
+// { uri: obj }
+function resultToHash (result) {
+  var item = {}
+
+  // build one row obj
+  _.each(result, function (val, key) {
+    item[key] = val.value
+  })
+
+  return item
+}

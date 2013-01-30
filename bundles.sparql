@@ -1,0 +1,50 @@
+# get list of bundles
+prefix dc: <http://purl.org/dc/terms/>
+prefix role: <http://purl.org/role/terms/>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+select *
+WHERE {
+?bundle a role:bundle .
+?bundle dc:title ?title .
+OPTIONAL {?bundle dc:description ?description .}
+OPTIONAL {?bundle foaf:depicts ?thumbnail .}
+}
+
+# get list of screenshots
+prefix role: <http://purl.org/role/terms/>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+select *
+WHERE {
+?bundle a role:bundle .
+?bundle foaf:img ?screenshot .
+}
+
+# get only sources of widgets in a bundle
+prefix dcterms: <http://purl.org/dc/terms/>
+prefix role: <http://purl.org/role/terms/>
+
+SELECT ?bundle ?src
+WHERE {
+  ?bundle rdf:type role:bundle .
+  ?bundle role:toolConfiguration ?configuration .
+  ?configuration role:tool ?tool .
+  ?tool dcterms:source ?src .
+}
+
+
+# get widgets in a bundle
+prefix dcterms: <http://purl.org/dc/terms/>
+prefix role: <http://purl.org/role/terms/>
+prefix foaf: <http://xmlns.com/foaf/0.1/>
+
+SELECT ?bundle ?tool ?toolTitle ?toolConfigurationDescription ?src
+WHERE {
+  ?bundle rdf:type role:bundle.
+  ?bundle role:toolConfiguration ?configuration.
+  ?configuration role:tool ?tool.
+  ?configuration dcterms:description ?toolConfigurationDescription.
+  ?tool dcterms:title ?toolTitle.
+  ?tool dcterms:source ?src.
+  FILTER(?bundle = <http://role-widgetstore.eu/bundle/learn-foreign-language-reading-text>)
+}
+

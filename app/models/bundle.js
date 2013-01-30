@@ -12,6 +12,10 @@ var crypto = require('crypto')
 module.exports =
 { title: String
 , source: String
+, thumbnail: String
+, screenshots: String
+, description: String
+, apps: String
 }
 
 //function Bundle() {
