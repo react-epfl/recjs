@@ -160,7 +160,7 @@ ExternalController.prototype.bundles = function (req, res) {
       var self = this;
 
       app.Bundle.find( conditions
-                  , 'title screenshots thumbnail description apps'
+                  , 'title screenshot thumbnail description apps'
                   , {limit: limit, skip: offset}
                   , function (err, result) {
                     self(err, result)
@@ -247,8 +247,8 @@ ExternalController.prototype.populate_bundles = function (req, res) {
       var arr = []
       _.each(bundles, function (bundle) {
         var uri = bundle.bundle //get the uri from bundle object
-        // add screenshots
-        bundle.screenshots = screenshots[uri]
+        // add screenshot
+        bundle.screenshot = screenshots[uri]
 
         // add apps
         bundle.apps = apps[uri]

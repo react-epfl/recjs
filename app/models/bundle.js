@@ -13,7 +13,7 @@ module.exports =
 { title: String
 , source: String
 , thumbnail: String
-, screenshots: String
+, screenshot: String
 , description: String
 , apps: String
 }
