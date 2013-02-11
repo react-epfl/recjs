@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Disabled</key>
+  <false/>
+        <key>Label</key>
+        <string>com.mongodb</string>
+        <key>ProgramArguments</key>
+        <array>
+                <string>/usr/local/bin/node</string>
+                <string>/recjs/current/app.js</string>
+        </array>
+        <key>RunAtLoad</key>
+        <true/>
+        <key>OnDemand</key>
+        <true/>
+        <key>StandardErrorPath</key>
+        <string>/recjs/shared/log/mongodb.log</string>
+        <key>StandardOutPath</key>
+        <string>/recjs/shared/log/mongodb.log</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PWD</key>
+    <string>/recjs/current</string>
+    <key>NODE_ENV</key>
+    <string>production</string>
+  </dict>
+</dict>
+</plist>
+
