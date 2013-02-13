@@ -1,8 +1,8 @@
 default_run_options[:pty] = true # for sudo support
 
 # to deploy into different servers
-set :stages, %w(devtest production unige unifr)
-set :default_stage, "devtest"
+set :stages, %w(reacttest production)
+set :default_stage, "reacttest"
 require 'capistrano/ext/multistage'
 
 # This defines a deployment "recipe" that you can feed to capistrano
