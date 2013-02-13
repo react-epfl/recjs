@@ -18,7 +18,7 @@ require 'capistrano/ext/multistage'
 # form the root of the application path.
 
 set :application, "Recjs"
-set :repository, "ssh://assistants@iamac71.epfl.ch/opt/git/recjs.git"
+set :repository, "git@github.com:react-epfl/recjs.git"
 
 set :deploy_to, "/recjs"
 # set :mongrel_conf, "#{current_path}/config/mongrel_cluster.yml"
