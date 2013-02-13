@@ -12,3 +12,10 @@ Architecture
 Based on the awesome [NodeJS](http://nodejs.org) framework with
 libraries built on top. As a database it uses [MongoDB](http://www.mongodb.org/).
 
+Deploy
+======
+Deploy is done with capistrano, the same as in Graasp.
+
+    cap production deploy
+    cap reacttest deploy
+
