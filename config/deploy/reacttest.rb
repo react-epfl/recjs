@@ -71,31 +71,6 @@ namespace :deploy do
 
   # Update database.yml and backgroundrb.yml
   task :after_update_code, :roles => :app do
-    # run "chmod 755 #{current_path}/script/spin"
-
-    #db_config_json = "#{sportaxy}/shared/config/database.json.production"
-    #run "cp #{db_config_json} #{release_path}/config/database.json"
-
-    # to use images in stylesheets in cache
-    #run "ln -fs /#{release_path}/public/stylesheets/images #{release_path}/public/stylesheets/cache/images"
-    #run "ln -fs /#{deploy_to}/shared/log #{release_path}/log"
-
-    # manage saved event_files
-    #run "mkdir #{release_path}/private"
-    #run "ln -fs #{sportaxy}/shared/files/event_data #{release_path}/private/event_data"
-
-    #run "rm -rf #{release_path}/public/user"
-    #run "ln -fs #{sportaxy}/shared/system/user #{release_path}/public/user"
-
-    # copy language files
-    #run "rm -rf #{release_path}/config/locales"
-    #run "ln -fs #{sportaxy}/current/config/locales #{release_path}/config/locales"
-
-    # create tmp folder TODO:(seems as it is already created or exists)
-    #run "mkdir #{release_path}/tmp"
-
-    # generate language files {en,ru,..}.yml, {en,ru,..}.js
-    #run "cd #{release_path}; script/translation/ondeploy production"
   end
 
 end

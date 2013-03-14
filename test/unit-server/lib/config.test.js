@@ -6,19 +6,19 @@ var helper = require("test_helper")
 describe('config', function () {
   it('should settings for production database', function () {
     var production = config.getDbConfig().production;
-    production.database.should.equal('sportaxy_production');
+    production.database.should.equal('recjs_production');
     production.username.should.equal('production');
     production.password.should.equal('production');
   })
   it('should settings for development database', function () {
     var development = config.getDbConfig().development;
-    development.database.should.equal('sportaxy_development');
+    development.database.should.equal('recjs_development');
     development.username.should.equal('root');
     development.password.should.equal('');
   })
   it('should settings for test database', function () {
     var development = config.getDbConfig().test;
-    development.database.should.equal('sportaxy_test');
+    development.database.should.equal('recjs_test');
     development.username.should.equal('root');
     development.password.should.equal('');
   })

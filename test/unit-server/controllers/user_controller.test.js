@@ -214,7 +214,7 @@ describe('user_controller', function () {
       fn(null, userMock)
     })
     gently.expect(flash, "setNotice" , function (par, fn) {
-      par.should.equal('registration.pls_activate_account<br /><br />login.spam_notice login.sportaxy_to_contacts_notice')
+      par.should.equal('registration.pls_activate_account<br /><br />login.spam_notice login.recjs_to_contacts_notice')
       fn()
     })
     var next = gently.expect(function callback(err) {
@@ -274,7 +274,7 @@ describe('user_controller', function () {
       return ""
     })
     gently.expect(flash, "setNotice" , function (par, fn) {
-      par.should.equal('login.new_password_sent_to_email<br /><br />login.spam_notice login.sportaxy_to_contacts_notice')
+      par.should.equal('login.new_password_sent_to_email<br /><br />login.spam_notice login.recjs_to_contacts_notice')
       fn()
     })
     gently.expect(res, "redirect", function (path) {
