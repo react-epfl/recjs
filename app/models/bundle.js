@@ -16,6 +16,7 @@ module.exports =
 , screenshot: String
 , description: String
 , apps: String
+, appThumbnails: String
 }
 
 //function Bundle() {

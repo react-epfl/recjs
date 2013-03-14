@@ -185,6 +185,7 @@ ExternalController.prototype.populate_bundles = function (req, res) {
     , bundles = []
     , screenshots = {}
     , apps = {}
+    , appThumbnails = {}
 
   Seq()
     //clear db with previous data
@@ -225,15 +226,17 @@ ExternalController.prototype.populate_bundles = function (req, res) {
     // get apps for a bundle from widget store
     .par(function () {
       var _this = this
-      var uri = '/simplerdf/sparql?query=prefix+dcterms%3A+<http%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F>%0D%0Aprefix+role%3A+<http%3A%2F%2Fpurl.org%2Frole%2Fterms%2F>%0D%0A%0D%0ASELECT+%3Fbundle+%3Fsrc%0D%0AWHERE+%7B%0D%0A++%3Fbundle+rdf%3Atype+role%3Abundle+.%0D%0A++%3Fbundle+role%3AtoolConfiguration+%3Fconfiguration+.%0D%0A++%3Fconfiguration+role%3Atool+%3Ftool+.%0D%0A++%3Ftool+dcterms%3Asource+%3Fsrc+.%0D%0A%7D%0D%0A&output=json'
+      var uri = '/simplerdf/sparql?query=prefix+dcterms%3A+<http%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F>%0D%0Aprefix+role%3A+<http%3A%2F%2Fpurl.org%2Frole%2Fterms%2F>%0D%0Aprefix+foaf%3A+<http%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F>%0D%0A%0D%0ASELECT+%3Fbundle+%3Fsrc+%3Fthumbnail%0D%0AWHERE+%7B%0D%0A++%3Fbundle+rdf%3Atype+role%3Abundle+.%0D%0A++%3Fbundle+role%3AtoolConfiguration+%3Fconfiguration+.%0D%0A++%3Fconfiguration+role%3Atool+%3Ftool+.%0D%0A++%3Ftool+dcterms%3Asource+%3Fsrc+.%0D%0AOPTIONAL+%7B%3Ftool+foaf%3Adepiction+%3Fthumbnail+.%7D%0D%0A%7D&output=json'
       getData(uri, function (results) {
         _.each(results, function (result) {
           var item = resultToHash(result)
             , uri = item.bundle
           if (apps[uri]) {
             apps[uri] = apps[uri] + "," + item.src
+            appThumbnails[uri] = appThumbnails[uri] + "," + item.thumbnail
           } else {
             apps[uri] = item.src
+            appThumbnails[uri] = item.thumbnail
           }
 
         })
@@ -252,6 +255,9 @@ ExternalController.prototype.populate_bundles = function (req, res) {
 
         // add apps
         bundle.apps = apps[uri]
+
+        // add appThumbnails
+        bundle.appThumbnails = appThumbnails[uri]
 
         arr.push(bundle)
       })
