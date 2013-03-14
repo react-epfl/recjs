@@ -195,7 +195,7 @@ ExternalController.prototype.populate_bundles = function (req, res) {
     // get bundles from widget store
     .par(function () {
       var _this = this
-      var uri = '/simplerdf/sparql?query=prefix+dc%3A+<http%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F>%0D%0Aprefix+role%3A+<http%3A%2F%2Fpurl.org%2Frole%2Fterms%2F>%0D%0Aprefix+foaf%3A+<http%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F>%0D%0Aselect+*%0D%0AWHERE+%7B%0D%0A%3Fbundle+a+role%3Abundle+.%0D%0A%3Fbundle+dc%3Atitle+%3Ftitle+.%0D%0AOPTIONAL+%7B%3Fbundle+dc%3Adescription+%3Fdescription+.%7D%0D%0AOPTIONAL+%7B%3Fbundle+foaf%3Adepicts+%3Fthumbnail+.%7D%0D%0A%7D%0D%0A&output=json'
+      var uri = '/simplerdf/sparql?query=prefix+dc%3A+<http%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F>%0D%0Aprefix+role%3A+<http%3A%2F%2Fpurl.org%2Frole%2Fterms%2F>%0D%0Aprefix+foaf%3A+<http%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F>%0D%0Aselect+*%0D%0AWHERE+%7B%0D%0A%3Fbundle+a+role%3Abundle+.%0D%0A%3Fbundle+dc%3Atitle+%3Ftitle+.%0D%0AOPTIONAL+%7B%3Fbundle+dc%3Adescription+%3Fdescription+.%7D%0D%0AOPTIONAL+%7B%3Fbundle+foaf%3Adepiction+%3Fthumbnail+.%7D%0D%0A%7D%0D%0A&output=json'
       getData(uri, function (results) {
         _.each(results, function (result) {
           var item = resultToHash(result)
