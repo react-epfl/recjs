@@ -279,7 +279,7 @@ function getData (url, cb) {
     , data = ""
 
   var options =
-    { host: 'staging.role-widgetstore.eu'
+    { host: 'role-widgetstore.eu'
     , port: 80
     , path: url
     }
