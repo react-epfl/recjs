@@ -1,3 +1,5 @@
+http://role-widgetstore.eu/simplerdf/sparql
+
 # get list of bundles
 prefix dc: <http://purl.org/dc/terms/>
 prefix role: <http://purl.org/role/terms/>
