@@ -160,7 +160,7 @@ ExternalController.prototype.bundles = function (req, res) {
       var self = this;
 
       app.Bundle.find( conditions
-                  , 'title screenshot thumbnail description apps'
+                  , 'title screenshot thumbnail description apps appThumbnails'
                   , {limit: limit, skip: offset}
                   , function (err, result) {
                     self(err, result)
