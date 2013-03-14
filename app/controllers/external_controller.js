@@ -46,7 +46,7 @@ ExternalController.prototype.populate_apps = function (req, res) {
     , data = ""
 
   var options =
-    { host: 'role-widgetstore.eu'
+    { host: 'staging.role-widgetstore.eu'
     , port: 80
     , path: '/simplerdf/sparql?query=prefix+dc%3A+<http%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F>%0D%0Aprefix+role%3A+<http%3A%2F%2Fpurl.org%2Frole%2Fterms%2F>%0D%0Aprefix+foaf%3A+<http%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F>%0D%0ASELECT+%3Ftitle+%3Fsource+%3Fdescription+%3Fthumbnail+%3Fscreenshot%0D%0A%7B%0D%0A%3Ftool+a+role%3AOpenSocialGadget+.%0D%0AOPTIONAL+%7B%3Ftool+dc%3Atitle+%3Ftitle+.%7D%0D%0AOPTIONAL+%7B%3Ftool+dc%3Asource+%3Fsource+.%7D%0D%0AOPTIONAL+%7B%3Ftool+dc%3Adescription+%3Fdescription+.%7D%0D%0AOPTIONAL+%7B%3Ftool+foaf%3Aimg+%3Fscreenshot+.%7D%0D%0AOPTIONAL+%7B%3Ftool+foaf%3Adepiction+%3Fthumbnail+.%7D%0D%0A%0D%0A%7D%0D%0A&output=json'
     }
@@ -279,7 +279,7 @@ function getData (url, cb) {
     , data = ""
 
   var options =
-    { host: 'role-widgetstore.eu'
+    { host: 'staging.role-widgetstore.eu'
     , port: 80
     , path: url
     }
